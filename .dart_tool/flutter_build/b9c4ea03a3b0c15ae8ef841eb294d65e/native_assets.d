@@ -1,0 +1,1 @@
+ C:\\Users\\Professor\ Giani\\Documents\\GitHub\\gerenciamento_estoque\\.dart_tool\\flutter_build\\b9c4ea03a3b0c15ae8ef841eb294d65e\\native_assets.yaml: 
