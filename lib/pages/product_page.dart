@@ -35,37 +35,39 @@ class _ProductPageState extends State<ProductPage> {
                       child: Text('Código:'),
                     ),
                     TextFormField(
-                      decoration:
-                          decoration_theme('Adicionar Código', 'Ex.: 12345...'),
+                      decoration: decorationTheme(
+                          'Adicionar Código', 'Ex.: 12345...', null),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 16),
                       child: Text('Nome:'),
                     ),
                     TextFormField(
-                      decoration: decoration_theme('Nome', 'Ex.: Caneta...'),
+                      decoration:
+                          decorationTheme('Nome', 'Ex.: Caneta...', null),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 16),
                       child: Text('Valor R\$:'),
                     ),
                     TextFormField(
-                      decoration: decoration_theme('Valor', 'R\$ 00.00'),
+                      decoration: decorationTheme('Valor', 'R\$ 00.00', null),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 16),
                       child: Text('Categoria:'),
                     ),
                     TextFormField(
-                      decoration: decoration_theme('Categoria', 'Escritório'),
+                      decoration:
+                          decorationTheme('Categoria', 'Escritório', null),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 16),
                       child: Text('Data de validade:'),
                     ),
                     TextFormField(
-                      decoration:
-                          decoration_theme('Data de validade', '20/05/2025'),
+                      decoration: decorationTheme(
+                          'Data de validade', '20/05/2025', null),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 50),
