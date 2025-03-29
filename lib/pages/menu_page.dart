@@ -1,5 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_estoque/pages/home_page.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -53,13 +54,7 @@ class _MenuPageState extends State<MenuPage> {
           ),
 
           /// Home page
-          Card(
-            shadowColor: Colors.transparent,
-            margin: const EdgeInsets.all(8.0),
-            child: SizedBox.expand(
-              child: Center(child: Text('Home page')),
-            ),
-          ),
+          HomePage(),
 
           /// in and out
           Card(
