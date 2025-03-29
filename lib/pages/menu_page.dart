@@ -16,54 +16,48 @@ class _MenuPageState extends State<MenuPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        bottomNavigationBar: CurvedNavigationBar(
-          height: 55,
-          index: currentPageIndex,
-          color: const Color(0xFF1C4C9C),
-          buttonBackgroundColor: const Color(0xFF1C4C9C),
-          backgroundColor: Colors.transparent,
-          onTap: (index) {
-            setState(() {
-              currentPageIndex = index;
-            });
-          },
-          items: const <Widget>[
-            Icon(
-              Icons.assignment,
-              size: 30,
-              color: Colors.white,
-            ),
-            Icon(
-              Icons.home,
-              size: 30,
-              color: Colors.white,
-            ),
-            Icon(
-              Icons.swap_vertical_circle_sharp,
-              size: 30,
-              color: Colors.white,
-            ),
-          ],
-        ),
-        body: <Widget>[
-          //Product List
-          Card(
-            child: Center(
-              child: Text('Product List Page'),
-            ),
+          bottomNavigationBar: CurvedNavigationBar(
+            height: 55,
+            index: currentPageIndex,
+            color: const Color(0xFF1C4C9C),
+            buttonBackgroundColor: const Color(0xFF1C4C9C),
+            backgroundColor: Colors.transparent,
+            onTap: (index) {
+              setState(() {
+                currentPageIndex = index;
+              });
+            },
+            items: const <Widget>[
+              Icon(
+                Icons.assignment,
+                size: 30,
+                color: Colors.white,
+              ),
+              Icon(
+                Icons.home,
+                size: 30,
+                color: Colors.white,
+              ),
+              Icon(
+                Icons.swap_vert_circle_sharp,
+                size: 30,
+                color: Colors.white,
+              ),
+            ],
           ),
-
-          /// Home page
-          HomePage(),
-
-          /// in and out
-          Card(
-            child: Center(
-              child: Text('Product List Page'),
+          body: <Widget>[
+            Card(
+              child: Center(
+                child: Text('Product List Page'),
+              ),
             ),
-          ),
-        ][currentPageIndex],
-      ),
+            HomePage(),
+            Card(
+              child: Center(
+                child: Text('In out Page'),
+              ),
+            ),
+          ][currentPageIndex]),
     );
   }
 }

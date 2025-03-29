@@ -22,7 +22,6 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Seção do cabeçalho
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -35,31 +34,28 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Seja bem-vindo(a),'),
                       Text(
                         'Giani Augusto Braga.',
                         style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      )
                     ],
                   ),
                   IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
+                    onPressed: null,
+                    icon: Icon(
                       Icons.logout_rounded,
                       size: 28,
                       color: Color(0xFF1C4C9C),
                     ),
-                  ),
+                  )
                 ],
               ),
-
-              const SizedBox(height: 60),
-
+              const SizedBox(
+                height: 60,
+              ),
               Expanded(
                 child: Card(
                   elevation: 2,
@@ -70,7 +66,6 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Header
                       Container(
                         padding: EdgeInsets.all(16),
                         decoration: BoxDecoration(
@@ -88,11 +83,16 @@ class _HomePageState extends State<HomePage> {
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.inventory,
-                                color: Colors.white, size: 20),
-                            SizedBox(width: 8),
+                            Icon(
+                              Icons.inventory,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
                             Text(
-                              'Produtos Com Estoque Baixo',
+                              'Produtos com Estoque Baixo',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
@@ -103,79 +103,73 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-
-                      // product list
                       Expanded(
-                        child: ListView.separated(
-                          padding: EdgeInsets.zero,
-                          itemCount: produtos.length,
-                          separatorBuilder: (_, __) => Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: Color(0xFF1C4C9C),
-                            indent: 16,
-                            endIndent: 16,
-                          ),
-                          itemBuilder: (context, index) {
-                            final produto = produtos[index];
-                            final isLowStock = produto['quantidade'] < 10;
-
-                            return Container(
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  left: BorderSide(width: 4, color: Colors.red),
-                                ),
-                              ),
-                              child: ListTile(
-                                minVerticalPadding: 16,
-                                contentPadding:
-                                    EdgeInsets.symmetric(horizontal: 16),
-                                leading: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red[50],
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.warning_amber,
-                                    color: Colors.red,
-                                    size: 20,
-                                  ),
-                                ),
-                                title: Text(
-                                  produto['nome'],
-                                  style: TextStyle(fontWeight: FontWeight.w500),
-                                ),
-                                subtitle: Text(
-                                  'Código: ${index + 1000}',
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                                trailing: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'Disponível',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                    Text(
-                                      produto['quantidade'].toString(),
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.red),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
+                          child: ListView.separated(
+                        padding: EdgeInsets.zero,
+                        itemCount: produtos.length,
+                        separatorBuilder: (_, __) => Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: Color(0xFF1C4C9C),
+                          indent: 16,
+                          endIndent: 16,
                         ),
-                      ),
+                        itemBuilder: (context, index) {
+                          final produto = produtos[index];
+                          return Container(
+                            decoration: BoxDecoration(
+                              border: Border(
+                                left: BorderSide(width: 4, color: Colors.red),
+                              ),
+                            ),
+                            child: ListTile(
+                              minVerticalPadding: 16,
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 16),
+                              leading: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Colors.red[50],
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.warning_amber,
+                                  color: Colors.red,
+                                  size: 20,
+                                ),
+                              ),
+                              title: Text(
+                                produto['nome'],
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
+                              subtitle: Text(
+                                'Código: ${index + 1000}',
+                                style: TextStyle(fontSize: 12),
+                              ),
+                              trailing: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'Disponível',
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey[600]),
+                                  ),
+                                  Text(
+                                    produto['quantidade'].toString(),
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.red,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ))
                     ],
                   ),
                 ),
