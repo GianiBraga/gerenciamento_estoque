@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       // Defininido a tela inicial do aplicativo.
-      home: MenuPage(),
+      home: LoginPage(),
     );
   }
 }

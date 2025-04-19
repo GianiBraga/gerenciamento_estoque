@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_estoque/pages/home_page.dart';
+import 'package:gerenciamento_estoque/pages/menu_page.dart';
 import 'package:gerenciamento_estoque/widgets/decoration.dart';
 
 class LoginPage extends StatefulWidget {
@@ -47,7 +49,14 @@ class _LoginPageState extends State<LoginPage> {
                         height: 32,
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MenuPage(),
+                            ),
+                          );
+                        },
                         child: Text(
                           'Acessar',
                           style: TextStyle(
@@ -60,9 +69,9 @@ class _LoginPageState extends State<LoginPage> {
                               MaterialStateProperty.resolveWith<Color>(
                             (Set<MaterialState> states) {
                               if (states.contains(MaterialState.pressed)) {
-                                return Colors.blue.shade700;
+                                return const Color(0xFF1C4C9C);
                               }
-                              return Colors.blue;
+                              return const Color(0xFF1C4C9C);
                             },
                           ),
                           minimumSize: MaterialStateProperty.all<Size>(
