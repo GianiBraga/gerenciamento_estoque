@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_estoque/pages/in_out_page.dart';
 import 'package:gerenciamento_estoque/pages/login_page.dart';
-import 'package:gerenciamento_estoque/pages/menu_page.dart';
-import 'package:gerenciamento_estoque/pages/product_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {

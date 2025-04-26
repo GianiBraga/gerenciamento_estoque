@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_estoque/pages/login_page.dart';
+import 'package:gerenciamento_estoque/widgets/user_session_util.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,6 +15,22 @@ class _HomePageState extends State<HomePage> {
     {'nome': 'Jaleco', 'quantidade': 5},
     {'nome': 'Óculos', 'quantidade': 8},
   ];
+
+  String? userName;
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserName();
+  }
+
+  // Função para obter o nome do usuário da sessão
+  Future<void> _getUserName() async {
+    final name = await UserSessionUtil.getUserName();
+    setState(() {
+      userName = name;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,26 +51,28 @@ class _HomePageState extends State<HomePage> {
                       fit: BoxFit.contain,
                     ),
                   ),
-                  const Column(
+                  Column(
                     children: [
-                      Text('Seja bem-vindo(a),'),
-                      Text(
-                        'Giani Augusto Braga.',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      )
+                      const Text('Seja bem-vindo(a),'),
+                      if (userName != null)
+                        Text(
+                          userName!,
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w500),
+                        ),
                     ],
                   ),
                   IconButton(
                     onPressed: () {
-                      Navigator.push(
+                      UserSessionUtil.clearSession(); // Limpa a sessão
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LoginPage(),
+                          builder: (context) => const LoginPage(),
                         ),
                       );
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.logout_rounded,
                       size: 28,
                       color: Color(0xFF1C4C9C),
@@ -67,7 +86,7 @@ class _HomePageState extends State<HomePage> {
               Expanded(
                 child: Card(
                   elevation: 2,
-                  margin: EdgeInsets.symmetric(vertical: 8),
+                  margin: const EdgeInsets.symmetric(vertical: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -75,22 +94,20 @@ class _HomePageState extends State<HomePage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Container(
-                        padding: EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Color(0xFF1C4C9C),
-                          borderRadius: BorderRadius.only(
+                          color: const Color(0xFF1C4C9C),
+                          borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(12),
                             topRight: Radius.circular(12),
                           ),
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Colors.blue[100]!,
-                              width: 1,
-                            ),
+                          border: Border.all(
+                            color: Colors.blue[100]!,
+                            width: 1,
                           ),
                         ),
                         child: Row(
-                          children: [
+                          children: const [
                             Icon(
                               Icons.inventory,
                               color: Colors.white,
@@ -115,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                           child: ListView.separated(
                         padding: EdgeInsets.zero,
                         itemCount: produtos.length,
-                        separatorBuilder: (_, __) => Divider(
+                        separatorBuilder: (_, __) => const Divider(
                           height: 1,
                           thickness: 1,
                           color: Color(0xFF1C4C9C),
@@ -133,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                             child: ListTile(
                               minVerticalPadding: 16,
                               contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 16),
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               leading: Container(
                                 width: 40,
                                 height: 40,
@@ -141,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                                   color: Colors.red[50],
                                   shape: BoxShape.circle,
                                 ),
-                                child: Icon(
+                                child: const Icon(
                                   Icons.warning_amber,
                                   color: Colors.red,
                                   size: 20,
@@ -149,11 +166,12 @@ class _HomePageState extends State<HomePage> {
                               ),
                               title: Text(
                                 produto['nome'],
-                                style: TextStyle(fontWeight: FontWeight.w500),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500),
                               ),
                               subtitle: Text(
                                 'Código: ${index + 1000}',
-                                style: TextStyle(fontSize: 12),
+                                style: const TextStyle(fontSize: 12),
                               ),
                               trailing: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -166,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   Text(
                                     produto['quantidade'].toString(),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.red,
@@ -181,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

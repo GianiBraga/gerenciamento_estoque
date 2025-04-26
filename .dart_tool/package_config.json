@@ -26,10 +26,22 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "args",
+      "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/args-2.7.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "async",
       "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.11.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
+    },
+    {
+      "name": "awesome_snackbar_content",
+      "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/awesome_snackbar_content-0.1.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
     },
     {
       "name": "boolean_selector",
@@ -104,6 +116,18 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "flutter_localizations",
+      "rootUri": "file:///C:/src/flutter/packages/flutter_localizations",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "flutter_svg",
+      "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_svg-2.0.10+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
       "name": "flutter_test",
       "rootUri": "file:///C:/src/flutter/packages/flutter_test",
       "packageUri": "lib/",
@@ -142,6 +166,12 @@
     {
       "name": "http_parser",
       "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/http_parser-4.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "intl",
+      "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/intl-0.18.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -212,6 +242,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "path_parsing",
+      "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/path_parsing-1.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "path_provider",
       "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider-2.1.4",
       "packageUri": "lib/",
@@ -244,6 +280,12 @@
     {
       "name": "path_provider_windows",
       "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_windows-2.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "petitparser",
+      "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/petitparser-6.0.2",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -440,6 +482,24 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "vector_graphics",
+      "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/vector_graphics-1.1.11+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "vector_graphics_codec",
+      "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/vector_graphics_codec-1.1.11+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "vector_graphics_compiler",
+      "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/vector_graphics_compiler-1.1.11+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
       "name": "vector_math",
       "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/vector_math-2.1.4",
       "packageUri": "lib/",
@@ -476,6 +536,12 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "xml",
+      "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/xml-6.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
       "name": "yet_another_json_isolate",
       "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/yet_another_json_isolate-2.0.3",
       "packageUri": "lib/",
@@ -488,7 +554,7 @@
       "languageVersion": "3.3"
     }
   ],
-  "generated": "2025-04-26T12:24:03.111617Z",
+  "generated": "2025-04-26T14:42:13.423277Z",
   "generator": "pub",
   "generatorVersion": "3.3.0"
 }
