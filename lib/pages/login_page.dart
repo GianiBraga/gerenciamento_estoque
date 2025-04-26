@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro inesperado.')),
+        const SnackBar(content: Text('Erro inesperado. ')),
       );
     }
   }

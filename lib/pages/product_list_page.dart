@@ -152,76 +152,49 @@ class _ProductListPageState extends State<ProductListPage> {
         onPressed: () {
           showDialog(
             context: context,
-            builder: (context) => AlertDialog(
-              contentPadding:
-                  EdgeInsets.zero, // remove padding padrão do content
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Header customizado
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF1C4C9C),
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(12)),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'Novo Produto',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Conteúdo do formulário
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: SingleChildScrollView(
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        child: ProductForm(),
-                      ),
-                    ),
-                  ),
-                  // Botões
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text(
-                            'Cancelar',
-                            style: TextStyle(color: Color(0xFF1C4C9C)),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Salvar produto
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF1C4C9C),
-                          ),
-                          child: const Text(
-                            'Salvar',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            builder: (context) => Dialog(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12)),
+              child: SizedBox(
+                // Ajuste aqui a largura e a altura que quiser
+                width: MediaQuery.of(context).size.width * 0.85,
+                height: MediaQuery.of(context).size.height * 0.75,
+                child: Column(
+                  children: [
+                    // HEADER
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF1C4C9C),
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(12)),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'Novo Produto',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // FORMULÁRIO (expand para ocupar o espaço disponível e rolar)
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: ProductForm(onSaved: () {
+                          // se quiser já incluir na lista local:
+                          setState(() {
+                            // por ex. simular append, ou recarregar do supabase
+                          });
+                        }),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
