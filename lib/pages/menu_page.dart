@@ -1,6 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_estoque/pages/home_page.dart';
+import 'package:gerenciamento_estoque/pages/in_out_page.dart';
 import 'package:gerenciamento_estoque/pages/product_list_page.dart';
 
 class MenuPage extends StatefulWidget {
@@ -49,11 +50,7 @@ class _MenuPageState extends State<MenuPage> {
           body: <Widget>[
             const ProductListPage(),
             const HomePage(),
-            const Card(
-              child: Center(
-                child: Text('In out Page'),
-              ),
-            ),
+            const InOutPage(),
           ][currentPageIndex]),
     );
   }

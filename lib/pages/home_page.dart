@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_estoque/pages/login_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
                       fit: BoxFit.contain,
                     ),
                   ),
-                  Column(
+                  const Column(
                     children: [
                       Text('Seja bem-vindo(a),'),
                       Text(
@@ -44,7 +45,14 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   IconButton(
-                    onPressed: null,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginPage(),
+                        ),
+                      );
+                    },
                     icon: Icon(
                       Icons.logout_rounded,
                       size: 28,

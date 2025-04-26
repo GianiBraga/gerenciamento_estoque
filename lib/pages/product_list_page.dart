@@ -3,7 +3,7 @@ import 'package:gerenciamento_estoque/pages/product_form.dart';
 import 'package:gerenciamento_estoque/pages/product_page.dart';
 
 class ProductListPage extends StatefulWidget {
-  const ProductListPage({Key? key}) : super(key: key);
+  const ProductListPage({super.key});
 
   @override
   State<ProductListPage> createState() => _ProductListPageState();
