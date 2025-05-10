@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_estoque/pages/product_form.dart';
-import 'package:gerenciamento_estoque/pages/product_page.dart';
+import 'package:gerenciamento_estoque/features/product/view/product_page.dart';
 
 class ProductListPage extends StatefulWidget {
   const ProductListPage({super.key});

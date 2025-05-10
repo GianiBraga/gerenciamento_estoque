@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_estoque/pages/menu_page.dart';
-import 'package:gerenciamento_estoque/widgets/decoration.dart';
-import 'package:gerenciamento_estoque/widgets/page_transition_util.dart';
-import 'package:gerenciamento_estoque/widgets/snackbar_util.dart';
-import 'package:gerenciamento_estoque/widgets/user_session_util.dart';
+import 'package:gerenciamento_estoque/core/widgets/decoration.dart';
+import 'package:gerenciamento_estoque/core/widgets/page_transition_util.dart';
+import 'package:gerenciamento_estoque/core/widgets/snackbar_util.dart';
+import 'package:gerenciamento_estoque/core/widgets/user_session_util.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginPage extends StatefulWidget {

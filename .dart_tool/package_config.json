@@ -170,6 +170,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "get",
+      "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/get-4.7.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.15"
+    },
+    {
       "name": "gotrue",
       "rootUri": "file:///C:/Users/Professor%20Giani/AppData/Local/Pub/Cache/hosted/pub.dev/gotrue-2.11.1",
       "packageUri": "lib/",
@@ -614,7 +620,7 @@
       "languageVersion": "3.3"
     }
   ],
-  "generated": "2025-05-10T10:25:33.746807Z",
+  "generated": "2025-05-10T10:44:58.844986Z",
   "generator": "pub",
   "generatorVersion": "3.3.0"
 }

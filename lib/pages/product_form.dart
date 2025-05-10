@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gerenciamento_estoque/widgets/decoration.dart';
-import 'package:gerenciamento_estoque/widgets/snackbar_util.dart';
+import 'package:gerenciamento_estoque/core/widgets/decoration.dart';
+import 'package:gerenciamento_estoque/core/widgets/snackbar_util.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';

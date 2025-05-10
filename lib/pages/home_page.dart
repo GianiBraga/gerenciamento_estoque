@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_estoque/pages/login_page.dart';
-import 'package:gerenciamento_estoque/widgets/user_session_util.dart';
+import 'package:gerenciamento_estoque/core/widgets/user_session_util.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
