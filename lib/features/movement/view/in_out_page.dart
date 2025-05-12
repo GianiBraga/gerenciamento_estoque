@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_estoque/core/widgets/decoration.dart';
 import 'package:get/get.dart';
-
 import '../controller/movement_controller.dart';
 
 class InOutPage extends GetView<MovementController> {
@@ -9,6 +8,8 @@ class InOutPage extends GetView<MovementController> {
 
   @override
   Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
+
     return Scaffold(
       appBar: AppBar(
         leading: Padding(
@@ -61,7 +62,7 @@ class InOutPage extends GetView<MovementController> {
                   Padding(
                     padding: const EdgeInsets.all(24),
                     child: Form(
-                      key: GlobalKey<FormState>(),
+                      key: _formKey,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -73,6 +74,12 @@ class InOutPage extends GetView<MovementController> {
                                   decoration: decorationTheme(
                                       'Código do Produto', '', null),
                                   keyboardType: TextInputType.number,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Informe o código do produto';
+                                    }
+                                    return null;
+                                  },
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -92,6 +99,15 @@ class InOutPage extends GetView<MovementController> {
                             controller: controller.quantidadeController,
                             decoration: decorationTheme('Quantidade', '', null),
                             keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Informe a quantidade';
+                              }
+                              if (int.tryParse(value) == null) {
+                                return 'Quantidade inválida';
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(height: 16),
                           Obx(() => DropdownButtonFormField<String>(
@@ -123,19 +139,33 @@ class InOutPage extends GetView<MovementController> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              const SizedBox(width: 8),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF1C4C9C),
-                                ),
-                                onPressed: () {
-                                  controller.saveMovement();
-                                },
-                                child: const Text(
-                                  'Salvar',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
+                              Obx(() => ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF1C4C9C),
+                                    ),
+                                    onPressed: controller.isLoading.value
+                                        ? null
+                                        : () {
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                              controller.saveMovement();
+                                            }
+                                          },
+                                    child: controller.isLoading.value
+                                        ? const SizedBox(
+                                            width: 16,
+                                            height: 16,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : const Text(
+                                            'Salvar',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                  )),
                             ],
                           ),
                         ],

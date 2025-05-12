@@ -5,8 +5,21 @@ import '../controller/product_controller.dart';
 import '../model/product_model.dart';
 import 'widgets/product_form.dart';
 
-class ProductListPage extends GetView<ProductController> {
+class ProductListPage extends StatefulWidget {
   const ProductListPage({super.key});
+
+  @override
+  State<ProductListPage> createState() => _ProductListPageState();
+}
+
+class _ProductListPageState extends State<ProductListPage> {
+  final ProductController controller = Get.find();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    controller.loadProducts(); // ← Atualiza sempre que a tela for focada
+  }
 
   @override
   Widget build(BuildContext context) {
