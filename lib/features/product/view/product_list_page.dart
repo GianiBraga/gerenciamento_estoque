@@ -5,6 +5,8 @@ import '../controller/product_controller.dart';
 import '../model/product_model.dart';
 import 'widgets/product_form.dart';
 
+/// Page that displays a list of all products, with search, add, edit, and delete functionality.
+/// Uses GetX for reactive state updates and Supabase for backend integration.
 class ProductListPage extends StatefulWidget {
   const ProductListPage({super.key});
 
@@ -18,12 +20,14 @@ class _ProductListPageState extends State<ProductListPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    controller.loadProducts(); // ← Atualiza sempre que a tela for focada
+    controller
+        .loadProducts(); // Reloads the product list whenever the page gains focus
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // App bar with logo, title, and search
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(left: 12),
@@ -52,6 +56,8 @@ class _ProductListPageState extends State<ProductListPage> {
           ),
         ],
       ),
+
+      // Body that listens to changes in product list
       body: Obx(() {
         final produtos = controller.products
             .where((p) => p.nome
@@ -60,9 +66,7 @@ class _ProductListPageState extends State<ProductListPage> {
             .toList();
 
         if (produtos.isEmpty) {
-          return const Center(
-            child: Text('Nenhum produto encontrado.'),
-          );
+          return const Center(child: Text('Nenhum produto encontrado.'));
         }
 
         return ListView.builder(
@@ -90,6 +94,7 @@ class _ProductListPageState extends State<ProductListPage> {
                 ),
                 child: Row(
                   children: [
+                    // Product image
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.network(
@@ -104,15 +109,14 @@ class _ProductListPageState extends State<ProductListPage> {
                           height: 56,
                           color: Colors.grey[200],
                           alignment: Alignment.center,
-                          child: const Icon(
-                            Icons.broken_image_outlined,
-                            size: 28,
-                            color: Colors.grey,
-                          ),
+                          child: const Icon(Icons.broken_image_outlined,
+                              size: 28, color: Colors.grey),
                         ),
                       ),
                     ),
                     const SizedBox(width: 12),
+
+                    // Product info
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,6 +133,8 @@ class _ProductListPageState extends State<ProductListPage> {
                         ],
                       ),
                     ),
+
+                    // Edit button
                     IconButton(
                       icon: const Icon(Icons.edit_outlined, size: 20),
                       color: const Color(0xFF1C4C9C),
@@ -146,6 +152,8 @@ class _ProductListPageState extends State<ProductListPage> {
                         );
                       },
                     ),
+
+                    // Delete button
                     if (produto.id != null)
                       IconButton(
                         icon: const Icon(Icons.delete_outline, size: 20),
@@ -160,6 +168,8 @@ class _ProductListPageState extends State<ProductListPage> {
           },
         );
       }),
+
+      // Floating Action Button to add new product
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
@@ -182,6 +192,7 @@ class _ProductListPageState extends State<ProductListPage> {
     );
   }
 
+  /// Shows confirmation dialog to delete a product by ID
   void _confirmarExclusao(BuildContext context, String id) {
     showDialog(
       context: context,
@@ -194,14 +205,15 @@ class _ProductListPageState extends State<ProductListPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Header
             Container(
               padding: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
                 color: Color(0xFF1C4C9C),
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
               ),
-              child: Row(
-                children: const [
+              child: const Row(
+                children: [
                   Icon(Icons.warning_amber_rounded, color: Colors.white),
                   SizedBox(width: 12),
                   Text(
@@ -239,7 +251,6 @@ class _ProductListPageState extends State<ProductListPage> {
                   ElevatedButton(
                     onPressed: () async {
                       await controller.deleteProduct(id);
-                      //Get.back();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
@@ -259,6 +270,7 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 }
 
+/// Search delegate to filter products by name.
 class ProdutoSearchDelegate extends SearchDelegate {
   final List<ProductModel> produtos;
   final ProductController controller;

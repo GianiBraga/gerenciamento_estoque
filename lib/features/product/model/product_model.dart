@@ -1,13 +1,15 @@
+/// Data model representing a product in the inventory.
+/// Used for communication between the application and Supabase.
 class ProductModel {
-  final String? id; // Corrigido: Supabase usa UUID
-  final String codigo;
-  final String nome;
-  final double valor;
-  final String categoria;
-  final String validade; // Data em formato 'yyyy-MM-dd'
-  final int quantidade;
-  final String descricao;
-  final String? imagemUrl;
+  final String? id; // Unique identifier (UUID) from Supabase
+  final String codigo; // Internal product code (e.g., SKU)
+  final String nome; // Product name
+  final double valor; // Product price
+  final String categoria; // Product category
+  final String validade; // Expiration date (format: yyyy-MM-dd)
+  final int quantidade; // Current stock quantity
+  final String descricao; // Description or details
+  final String? imagemUrl; // URL of the product image (optional)
 
   ProductModel({
     this.id,
@@ -21,7 +23,7 @@ class ProductModel {
     this.imagemUrl,
   });
 
-  /// Creates a ProductModel instance from a Map (e.g., from Supabase)
+  /// Creates a [ProductModel] instance from a Supabase response map.
   factory ProductModel.fromMap(Map<String, dynamic> map) {
     return ProductModel(
       id: map['id']?.toString(),
@@ -36,7 +38,7 @@ class ProductModel {
     );
   }
 
-  /// Converts this ProductModel instance into a Map for database insertion/update
+  /// Converts the [ProductModel] instance into a map for insertion or update in Supabase.
   Map<String, dynamic> toMap() {
     return {
       if (id != null) 'id': id,

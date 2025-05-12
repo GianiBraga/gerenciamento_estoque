@@ -3,6 +3,7 @@ import 'package:gerenciamento_estoque/features/product/controller/product_contro
 import 'package:get/get.dart';
 import '../../../core/widgets/user_session_util.dart';
 
+/// Home page that welcomes the user and shows low-stock products.
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -20,6 +21,7 @@ class _HomePageState extends State<HomePage> {
     _getUserName();
   }
 
+  /// Loads the user's name from local session storage.
   Future<void> _getUserName() async {
     final name = await UserSessionUtil.getUserName();
     setState(() {
@@ -35,7 +37,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Header com saudação
+              // Top header: logo, user name, logout
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -59,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                   IconButton(
                     onPressed: () async {
                       await UserSessionUtil.clearSession();
-                      Get.offAllNamed('/login');
+                      Get.offAllNamed('/login'); // Return to login screen
                     },
                     icon: const Icon(
                       Icons.logout_rounded,
@@ -69,8 +71,10 @@ class _HomePageState extends State<HomePage> {
                   )
                 ],
               ),
+
               const SizedBox(height: 60),
-              // Card de produtos com estoque baixo
+
+              // Card displaying products with low stock (quantity ≤ 5)
               Expanded(
                 child: Obx(() {
                   final produtosCriticos = controller.products
@@ -86,6 +90,7 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        // Card header
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
@@ -116,6 +121,8 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                         ),
+
+                        // If no critical products, show message
                         if (produtosCriticos.isEmpty)
                           const Expanded(
                             child: Center(
@@ -127,6 +134,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           )
                         else
+                          // List of products with low quantity
                           Expanded(
                             child: ListView.separated(
                               padding: EdgeInsets.zero,

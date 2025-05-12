@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
+/// Utility class to generate styled snackbars using the awesome_snackbar_content package.
 class SnackbarUtil {
+  /// Core method for building a styled snackbar with a given type.
   static SnackBar _build({
     required String title,
     required String message,
@@ -21,10 +23,11 @@ class SnackbarUtil {
     );
   }
 
-  // -------------------------------
-  // Métodos fáceis para cada tipo:
-  // -------------------------------
+  // -------------------------------------------------
+  // Simple factory methods for commonly used types:
+  // -------------------------------------------------
 
+  /// Displays a success snackbar.
   static SnackBar success({
     required String title,
     required String message,
@@ -38,6 +41,7 @@ class SnackbarUtil {
     );
   }
 
+  /// Displays an error snackbar.
   static SnackBar error({
     required String title,
     required String message,
@@ -51,6 +55,7 @@ class SnackbarUtil {
     );
   }
 
+  /// Displays a warning snackbar.
   static SnackBar warning({
     required String title,
     required String message,
@@ -64,6 +69,7 @@ class SnackbarUtil {
     );
   }
 
+  /// Displays an informational snackbar.
   static SnackBar info({
     required String title,
     required String message,

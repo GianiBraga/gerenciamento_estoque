@@ -8,6 +8,8 @@ import '../../features/product/view/product_list_page.dart';
 import '../../features/dashboard/view/home_page.dart';
 import '../../features/movement/view/in_out_page.dart';
 
+/// Main navigation container that provides access to product list,
+/// home dashboard, and stock movement pages using a curved bottom navigation bar.
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
 
@@ -16,6 +18,7 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
+  /// Tracks the index of the currently selected navigation tab.
   int currentPageIndex = 1;
 
   @override
@@ -24,6 +27,7 @@ class _MenuPageState extends State<MenuPage> {
     _registerControllersIfNeeded();
   }
 
+  /// Registers required controllers only if they are not already instantiated.
   void _registerControllersIfNeeded() {
     if (!Get.isRegistered<ProductController>()) {
       Get.put(ProductController());
@@ -35,14 +39,16 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Pages associated with each navigation index.
     final List<Widget> pages = const [
-      ProductListPage(),
-      HomePage(),
-      InOutPage(),
+      ProductListPage(), // Index 0: Product list
+      HomePage(), // Index 1: Dashboard / welcome screen
+      InOutPage(), // Index 2: Stock movement registration
     ];
 
     return SafeArea(
       child: Scaffold(
+        // Curved bottom navigation bar with 3 icons
         bottomNavigationBar: CurvedNavigationBar(
           height: 55,
           index: currentPageIndex,
@@ -60,6 +66,8 @@ class _MenuPageState extends State<MenuPage> {
             Icon(Icons.swap_vert_circle_sharp, size: 30, color: Colors.white),
           ],
         ),
+
+        // Render the current page based on selected tab
         body: pages[currentPageIndex],
       ),
     );

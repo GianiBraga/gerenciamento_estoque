@@ -7,9 +7,11 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
+/// Form widget for adding or editing a product.
+/// Supports image selection, validation, and saving to Supabase.
 class ProductForm extends StatefulWidget {
-  final VoidCallback onSaved;
-  final ProductModel? produto;
+  final VoidCallback onSaved; // Callback to execute after save
+  final ProductModel? produto; // Product to edit (null for new)
 
   const ProductForm({
     super.key,
@@ -32,7 +34,7 @@ class _ProductFormState extends State<ProductForm> {
   void initState() {
     super.initState();
 
-    // Preenche campos se estiver editando
+    // If editing an existing product, populate form fields
     if (widget.produto != null) {
       final p = widget.produto!;
       controller.codigoController.text = p.codigo;
@@ -45,6 +47,7 @@ class _ProductFormState extends State<ProductForm> {
     }
   }
 
+  /// Opens a calendar picker and fills the expiration date field.
   Future<void> _selecionarData() async {
     final pickedDate = await showDatePicker(
       context: context,
@@ -59,6 +62,7 @@ class _ProductFormState extends State<ProductForm> {
     }
   }
 
+  /// Opens the device gallery to select an image for the product.
   Future<void> _selecionarImagem() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -83,6 +87,7 @@ class _ProductFormState extends State<ProductForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Image selection area
               Center(
                 child: GestureDetector(
                   onTap: _selecionarImagem,
@@ -109,16 +114,23 @@ class _ProductFormState extends State<ProductForm> {
                   ),
                 ),
               ),
+
               const SizedBox(height: 20),
+
+              // Product form fields
               _buildLabel('Código:'),
               _buildField(controller.codigoController, 'Ex.: 12345...', true),
+
               _buildLabel('Nome:'),
               _buildField(controller.nomeController, 'Ex.: Caneta...', true),
-              _buildLabel('Valor R\$:'),
+
+              _buildLabel('Valor R\$:'), // Price input
               _buildField(controller.valorController, 'R\$ 00.00', false,
                   keyboardType: TextInputType.number),
+
               _buildLabel('Categoria:'),
               _buildField(controller.categoriaController, 'Escritório', false),
+
               _buildLabel('Data de validade:'),
               TextFormField(
                 controller: controller.validadeController,
@@ -133,7 +145,9 @@ class _ProductFormState extends State<ProductForm> {
                   ),
                 ),
               ),
+
               const SizedBox(height: 12),
+
               _buildLabel('Quantidade:'),
               TextFormField(
                 controller: controller.quantidadeController,
@@ -145,7 +159,9 @@ class _ProductFormState extends State<ProductForm> {
                   return null;
                 },
               ),
+
               const SizedBox(height: 12),
+
               _buildLabel('Descrição:'),
               TextFormField(
                 controller: controller.descricaoController,
@@ -153,13 +169,17 @@ class _ProductFormState extends State<ProductForm> {
                     decorationTheme('', 'Descrição do produto...', null),
                 maxLines: 3,
               ),
+
               const SizedBox(height: 24),
+
+              // Save and cancel buttons
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    // Cancel button
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
                       child: const Text(
@@ -168,6 +188,8 @@ class _ProductFormState extends State<ProductForm> {
                       ),
                     ),
                     const SizedBox(width: 8),
+
+                    // Save button with loading indicator
                     ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
@@ -209,6 +231,7 @@ class _ProductFormState extends State<ProductForm> {
     );
   }
 
+  /// Builds a section label with padding
   Widget _buildLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(top: 12, bottom: 4),
@@ -216,6 +239,7 @@ class _ProductFormState extends State<ProductForm> {
     );
   }
 
+  /// Builds a standard text input field
   Widget _buildField(
       TextEditingController controller, String hint, bool required,
       {TextInputType keyboardType = TextInputType.text}) {

@@ -7,15 +7,16 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../data/product_service.dart';
 import '../../product/model/product_model.dart';
 
-/// Controller for managing product form and product list using GetX.
+/// Controller responsible for managing product data and operations using GetX.
+/// Handles form input, state management, and Supabase integration.
 class ProductController extends GetxController {
-  /// Reactive list of products
+  /// Reactive list of all products for listing and search
   final RxList<ProductModel> products = <ProductModel>[].obs;
 
-  /// Search filter for product list
+  /// Search filter text used for filtering product list
   final RxString filtro = ''.obs;
 
-  /// Form field controllers
+  // Text field controllers for the product form
   final codigoController = TextEditingController();
   final nomeController = TextEditingController();
   final valorController = TextEditingController();
@@ -24,20 +25,22 @@ class ProductController extends GetxController {
   final quantidadeController = TextEditingController();
   final descricaoController = TextEditingController();
 
-  /// Service layer for Supabase operations
+  /// Service layer to perform CRUD operations with Supabase
   final ProductService _productService = ProductService();
 
-  /// Load all products from Supabase
+  /// Loads all products from Supabase and updates the observable list
   Future<void> loadProducts() async {
     final data = await _productService.getAllProducts();
     print('Produtos carregados: ${data.length}');
     products.assignAll(data);
   }
 
-  /// Save a new product to Supabase
+  /// Saves a new product to Supabase, including optional image upload
   Future<void> saveProduct({File? imageFile}) async {
     try {
       String? imageUrl;
+
+      // Upload image if provided
       if (imageFile != null) {
         final fileName = 'produto_${DateTime.now().millisecondsSinceEpoch}.jpg';
         await Supabase.instance.client.storage
@@ -48,6 +51,7 @@ class ProductController extends GetxController {
             .getPublicUrl(fileName);
       }
 
+      // Create product model from form input
       final product = ProductModel(
         codigo: codigoController.text,
         nome: nomeController.text,
@@ -61,11 +65,11 @@ class ProductController extends GetxController {
       );
 
       await _productService.insertProduct(product);
-
       await loadProducts();
 
       clearForm();
       Get.back();
+
       Get.snackbar('Sucesso', 'Produto salvo com sucesso.',
           snackPosition: SnackPosition.BOTTOM);
     } catch (e) {
@@ -74,11 +78,12 @@ class ProductController extends GetxController {
     }
   }
 
-  /// Update an existing product
+  /// Updates an existing product on Supabase and refreshes the local list
   Future<void> updateProduct(ProductModel original, {File? imageFile}) async {
     try {
       String? imageUrl = original.imagemUrl;
 
+      // Upload new image if provided
       if (imageFile != null) {
         final fileName = 'produto_${DateTime.now().millisecondsSinceEpoch}.jpg';
         await Supabase.instance.client.storage
@@ -89,6 +94,7 @@ class ProductController extends GetxController {
             .getPublicUrl(fileName);
       }
 
+      // Build updated product object
       final updated = ProductModel(
         id: original.id,
         codigo: codigoController.text,
@@ -104,11 +110,11 @@ class ProductController extends GetxController {
 
       await _productService.updateProduct(updated);
 
-      // Atualiza na lista local reativa
+      // Update local observable list reactively
       final index = products.indexWhere((p) => p.id == updated.id);
       if (index != -1) {
         products[index] = updated;
-        products.refresh(); // força rebuild
+        products.refresh();
       }
 
       clearForm();
@@ -121,36 +127,27 @@ class ProductController extends GetxController {
     }
   }
 
-  /// Delete a product by ID
+  /// Deletes a product from Supabase and removes it from the local list
   Future<void> deleteProduct(String id) async {
     try {
       await _productService.deleteProduct(id);
 
-      // Remove localmente da lista observável
       products.removeWhere((p) => p.id == id);
-      products.refresh(); // garante rebuild se necessário
+      products.refresh();
 
-      // Fecha o dialog (caso esteja dentro de um)
       if (Get.key.currentState?.canPop() == true) {
         Get.back();
       }
 
-      Get.snackbar(
-        'Sucesso',
-        'Produto excluído com sucesso.',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Sucesso', 'Produto excluído com sucesso.',
+          snackPosition: SnackPosition.BOTTOM);
     } catch (e) {
-      Get.snackbar(
-        'Erro',
-        'Erro ao excluir produto: $e',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-      );
+      Get.snackbar('Erro', 'Erro ao excluir produto: $e',
+          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
     }
   }
 
-  /// Clears all form fields
+  /// Clears all text fields in the product form
   void clearForm() {
     codigoController.clear();
     nomeController.clear();
@@ -161,12 +158,14 @@ class ProductController extends GetxController {
     descricaoController.clear();
   }
 
+  /// Loads products when the controller is first initialized
   @override
   void onInit() {
     super.onInit();
     loadProducts();
   }
 
+  /// Disposes form controllers when the controller is destroyed
   @override
   void onClose() {
     codigoController.dispose();
@@ -179,7 +178,7 @@ class ProductController extends GetxController {
     super.onClose();
   }
 
-  /// Converts date from dd/MM/yyyy to yyyy-MM-dd (for Supabase)
+  /// Converts date string from dd/MM/yyyy to yyyy-MM-dd (used in Supabase)
   String _formatarDataParaSQL(String dataInput) {
     if (dataInput.isEmpty) return '';
     try {

@@ -1,10 +1,12 @@
+/// Model class that represents a stock movement (entry or exit).
+/// Used to transfer data between the application and the Supabase database.
 class MovementModel {
-  final String? id;
-  final String produtoId;
-  final int quantidade;
-  final String tipo;
-  final String? usuarioId;
-  final DateTime? data;
+  final String? id; // Unique ID (nullable, used for updates)
+  final String produtoId; // Related product's ID (foreign key)
+  final int quantidade; // Quantity moved (positive integer)
+  final String tipo; // Type of movement: 'entrada' or 'saida'
+  final String? usuarioId; // ID of the user who performed the movement
+  final DateTime? data; // Timestamp of the movement
 
   MovementModel({
     this.id,
@@ -15,6 +17,7 @@ class MovementModel {
     this.data,
   });
 
+  /// Creates a MovementModel instance from a Supabase record (Map).
   factory MovementModel.fromMap(Map<String, dynamic> map) {
     return MovementModel(
       id: map['id']?.toString(),
@@ -26,6 +29,7 @@ class MovementModel {
     );
   }
 
+  /// Converts the MovementModel instance into a Map for Supabase insertion.
   Map<String, dynamic> toMap() {
     return {
       if (id != null) 'id': id,

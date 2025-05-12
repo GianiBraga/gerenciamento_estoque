@@ -3,6 +3,9 @@ import 'package:gerenciamento_estoque/core/widgets/decoration.dart';
 import 'package:get/get.dart';
 import '../controller/movement_controller.dart';
 
+/// Page for registering stock entries and exits (movimentações).
+/// Includes a form with product code, quantity, and movement type.
+/// Integrates with [MovementController] using GetX.
 class InOutPage extends GetView<MovementController> {
   const InOutPage({super.key});
 
@@ -39,6 +42,7 @@ class InOutPage extends GetView<MovementController> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Header of the form
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
@@ -59,6 +63,8 @@ class InOutPage extends GetView<MovementController> {
                       ),
                     ),
                   ),
+
+                  // Movement form body
                   Padding(
                     padding: const EdgeInsets.all(24),
                     child: Form(
@@ -66,13 +72,17 @@ class InOutPage extends GetView<MovementController> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          // Código do produto + botão de pesquisa (não implementado)
                           Row(
                             children: [
                               Expanded(
                                 child: TextFormField(
                                   controller: controller.codigoController,
                                   decoration: decorationTheme(
-                                      'Código do Produto', '', null),
+                                    'Código do Produto',
+                                    '',
+                                    null,
+                                  ),
                                   keyboardType: TextInputType.number,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -87,14 +97,19 @@ class InOutPage extends GetView<MovementController> {
                                 icon: const Icon(Icons.search,
                                     color: Color(0xFF1C4C9C)),
                                 onPressed: () {
-                                  Get.snackbar('Info',
-                                      'Funcionalidade de pesquisa ainda não implementada.',
-                                      snackPosition: SnackPosition.BOTTOM);
+                                  Get.snackbar(
+                                    'Info',
+                                    'Funcionalidade de pesquisa ainda não implementada.',
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  );
                                 },
                               ),
                             ],
                           ),
+
                           const SizedBox(height: 16),
+
+                          // Campo de quantidade
                           TextFormField(
                             controller: controller.quantidadeController,
                             decoration: decorationTheme('Quantidade', '', null),
@@ -109,21 +124,26 @@ class InOutPage extends GetView<MovementController> {
                               return null;
                             },
                           ),
+
                           const SizedBox(height: 16),
+
+                          // Dropdown para tipo de movimentação (Entrada ou Saída)
                           Obx(() => DropdownButtonFormField<String>(
                                 value: controller.tipoMovimentacao.value,
                                 decoration: decorationTheme(
-                                    'Tipo de Movimentação', '', null),
+                                  'Tipo de Movimentação',
+                                  '',
+                                  null,
+                                ),
                                 items: ['Entrada', 'Saída']
-                                    .map(
-                                      (tipo) => DropdownMenuItem(
-                                        value: tipo,
-                                        child: Text(
-                                          tipo,
-                                          style: const TextStyle(fontSize: 14),
-                                        ),
-                                      ),
-                                    )
+                                    .map((tipo) => DropdownMenuItem(
+                                          value: tipo,
+                                          child: Text(
+                                            tipo,
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ))
                                     .toList(),
                                 onChanged: (value) {
                                   if (value != null) {
@@ -131,11 +151,16 @@ class InOutPage extends GetView<MovementController> {
                                   }
                                 },
                                 style: const TextStyle(
-                                    fontSize: 16, color: Colors.black),
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
                                 dropdownColor: Colors.white,
                                 isDense: true,
                               )),
+
                           const SizedBox(height: 24),
+
+                          // Botão de salvar
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
