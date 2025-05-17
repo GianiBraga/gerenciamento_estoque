@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_estoque/core/widgets/decoration.dart';
 import 'package:get/get.dart';
 
 import '../controller/product_controller.dart';
@@ -16,6 +17,8 @@ class ProductListPage extends StatefulWidget {
 
 class _ProductListPageState extends State<ProductListPage> {
   final ProductController controller = Get.find();
+  bool isSearching = false;
+  final TextEditingController searchController = TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -38,20 +41,36 @@ class _ProductListPageState extends State<ProductListPage> {
             fit: BoxFit.contain,
           ),
         ),
-        title: const Text(
-          'Produtos',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: isSearching
+            ? TextField(
+                controller: searchController,
+                autofocus: true,
+                onChanged: (value) => setState(() {
+                  controller.filtro.value = value;
+                }),
+                decoration: decorationTheme(
+                  '',
+                  'Pesquisar produto...',
+                  null,
+                ),
+              )
+            : const Text(
+                'Produtos',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.search, color: Color(0xFF1C4C9C)),
+            icon: Icon(isSearching ? Icons.close : Icons.search,
+                color: const Color(0xFF1C4C9C)),
             onPressed: () {
-              showSearch(
-                context: context,
-                delegate:
-                    ProdutoSearchDelegate(controller.products, controller),
-              );
+              setState(() {
+                if (isSearching) {
+                  searchController.clear();
+                  controller.filtro.value = '';
+                }
+                isSearching = !isSearching;
+              });
             },
           ),
         ],
@@ -63,7 +82,9 @@ class _ProductListPageState extends State<ProductListPage> {
             .where((p) => p.nome
                 .toLowerCase()
                 .contains(controller.filtro.value.toLowerCase()))
-            .toList();
+            .toList()
+          ..sort(
+              (a, b) => a.nome.toLowerCase().compareTo(b.nome.toLowerCase()));
 
         if (produtos.isEmpty) {
           return const Center(child: Text('Nenhum produto encontrado.'));

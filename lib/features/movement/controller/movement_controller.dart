@@ -78,11 +78,24 @@ class MovementController extends GetxController {
 
       clearForm();
       Get.snackbar('Sucesso', 'Movimentação registrada com sucesso.',
-          snackPosition: SnackPosition.BOTTOM);
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green.withOpacity(0.40));
+      // Get.rawSnackbar(
+      //   messageText: const Text(
+      //     'Operação concluída!',
+      //     style: TextStyle(color: Colors.white),
+      //   ),
+      //   backgroundColor: Colors.green.withOpacity(0.85),
+      //   snackPosition: SnackPosition.TOP,
+      //   margin: const EdgeInsets.all(16),
+      //   borderRadius: 12,
+      //   duration: const Duration(seconds: 3),
+      // );
     } catch (e) {
       // Show error if something goes wrong
       Get.snackbar('Erro', 'Erro ao registrar movimentação: $e',
-          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red.withOpacity(0.40));
     } finally {
       isLoading.value = false;
     }

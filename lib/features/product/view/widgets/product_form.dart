@@ -181,7 +181,8 @@ class _ProductFormState extends State<ProductForm> {
                   children: [
                     // Cancel button
                     TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () =>
+                          {controller.clearForm(), Navigator.of(context).pop()},
                       child: const Text(
                         'Cancelar',
                         style: TextStyle(color: Color(0xFF1C4C9C)),

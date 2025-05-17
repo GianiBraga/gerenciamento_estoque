@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_estoque/core/widgets/decoration.dart';
+import 'package:gerenciamento_estoque/features/movement/view/modals/product_search_modal.dart';
 import 'package:get/get.dart';
 import '../controller/movement_controller.dart';
 
@@ -96,11 +97,15 @@ class InOutPage extends GetView<MovementController> {
                               IconButton(
                                 icon: const Icon(Icons.search,
                                     color: Color(0xFF1C4C9C)),
-                                onPressed: () {
-                                  Get.snackbar(
-                                    'Info',
-                                    'Funcionalidade de pesquisa ainda não implementada.',
-                                    snackPosition: SnackPosition.BOTTOM,
+                                onPressed: () async {
+                                  await showDialog(
+                                    context: context,
+                                    builder: (context) => ProductSearchModal(
+                                      onSelect: (codigoSelecionado) {
+                                        controller.codigoController.text =
+                                            codigoSelecionado;
+                                      },
+                                    ),
                                   );
                                 },
                               ),

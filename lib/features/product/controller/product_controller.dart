@@ -71,10 +71,12 @@ class ProductController extends GetxController {
       Get.back();
 
       Get.snackbar('Sucesso', 'Produto salvo com sucesso.',
-          snackPosition: SnackPosition.BOTTOM);
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green.withOpacity(0.40));
     } catch (e) {
       Get.snackbar('Erro', 'Erro ao salvar produto: $e',
-          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.withOpacity(0.40));
     }
   }
 
@@ -120,10 +122,12 @@ class ProductController extends GetxController {
       clearForm();
       Get.back();
       Get.snackbar('Sucesso', 'Produto atualizado com sucesso.',
-          snackPosition: SnackPosition.BOTTOM);
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green.withOpacity(0.40));
     } catch (e) {
       Get.snackbar('Erro', 'Erro ao atualizar produto: $e',
-          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red.withOpacity(0.40));
     }
   }
 
@@ -140,10 +144,12 @@ class ProductController extends GetxController {
       }
 
       Get.snackbar('Sucesso', 'Produto excluído com sucesso.',
-          snackPosition: SnackPosition.BOTTOM);
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green.withOpacity(0.40));
     } catch (e) {
       Get.snackbar('Erro', 'Erro ao excluir produto: $e',
-          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red.withOpacity(0.40));
     }
   }
 
