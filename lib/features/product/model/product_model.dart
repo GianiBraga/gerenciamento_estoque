@@ -6,7 +6,7 @@ class ProductModel {
   final String nome; // Product name
   final double valor; // Product price
   final String segmento; // Product category
-  final String validade; // Expiration date (format: yyyy-MM-dd)
+  final String? validade; // Expiration date (format: yyyy-MM-dd)
   final int quantidade; // Current stock quantity
   final String descricao; // Description or details
   final String? imagemUrl; // URL of the product image (optional)

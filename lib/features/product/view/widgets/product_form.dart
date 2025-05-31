@@ -45,7 +45,7 @@ class _ProductFormState extends State<ProductForm> {
       controller.nomeController.text = p.nome;
       controller.valorController.text = p.valor.toString();
       controller.segmentoController.text = p.segmento;
-      controller.validadeController.text = p.validade;
+      controller.validadeController.text = p.validade.toString();
       controller.quantidadeController.text = p.quantidade.toString();
       controller.descricaoController.text = p.descricao;
       controller.estoqueMinimoController.text = p.estoqueMinimo.toString();
@@ -65,6 +65,8 @@ class _ProductFormState extends State<ProductForm> {
     if (pickedDate != null) {
       controller.validadeController.text =
           DateFormat('dd/MM/yyyy').format(pickedDate);
+    } else {
+      controller.validadeController.text = '';
     }
   }
 
@@ -163,7 +165,7 @@ class _ProductFormState extends State<ProductForm> {
                 readOnly: true,
                 onTap: _selecionarData,
                 decoration: decorationTheme(
-                  '',
+                  ' ',
                   '20/05/2025',
                   IconButton(
                     icon: const Icon(Icons.calendar_today),
