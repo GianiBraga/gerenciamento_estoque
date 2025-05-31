@@ -20,7 +20,7 @@ class ProductController extends GetxController {
   final codigoController = TextEditingController();
   final nomeController = TextEditingController();
   final valorController = TextEditingController();
-  final categoriaController = TextEditingController();
+  final segmentoController = TextEditingController();
   final validadeController = TextEditingController();
   final quantidadeController = TextEditingController();
   final descricaoController = TextEditingController();
@@ -59,7 +59,7 @@ class ProductController extends GetxController {
         nome: nomeController.text,
         valor:
             double.tryParse(valorController.text.replaceAll(',', '.')) ?? 0.0,
-        categoria: categoriaController.text,
+        segmento: segmentoController.text,
         validade: _formatarDataParaSQL(validadeController.text),
         unidade: unidade,
         quantidade: int.tryParse(quantidadeController.text) ?? 0,
@@ -108,7 +108,7 @@ class ProductController extends GetxController {
         nome: nomeController.text,
         valor:
             double.tryParse(valorController.text.replaceAll(',', '.')) ?? 0.0,
-        categoria: categoriaController.text,
+        segmento: segmentoController.text,
         validade: _formatarDataParaSQL(validadeController.text),
         unidade: unidade,
         quantidade: int.tryParse(quantidadeController.text) ?? 0,
@@ -164,7 +164,7 @@ class ProductController extends GetxController {
     codigoController.clear();
     nomeController.clear();
     valorController.clear();
-    categoriaController.clear();
+    segmentoController.clear();
     validadeController.clear();
     quantidadeController.clear();
     descricaoController.clear();
@@ -183,7 +183,7 @@ class ProductController extends GetxController {
     codigoController.dispose();
     nomeController.dispose();
     valorController.dispose();
-    categoriaController.dispose();
+    segmentoController.dispose();
     validadeController.dispose();
     quantidadeController.dispose();
     descricaoController.dispose();

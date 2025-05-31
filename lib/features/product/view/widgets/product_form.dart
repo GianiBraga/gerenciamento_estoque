@@ -44,7 +44,7 @@ class _ProductFormState extends State<ProductForm> {
       controller.codigoController.text = p.codigo;
       controller.nomeController.text = p.nome;
       controller.valorController.text = p.valor.toString();
-      controller.categoriaController.text = p.categoria;
+      controller.segmentoController.text = p.segmento;
       controller.validadeController.text = p.validade;
       controller.quantidadeController.text = p.quantidade.toString();
       controller.descricaoController.text = p.descricao;
@@ -133,27 +133,27 @@ class _ProductFormState extends State<ProductForm> {
               _buildField(controller.valorController, 'R\$ 00.00', false,
                   keyboardType: TextInputType.number),
 
-              _buildLabel('Categoria:'),
+              _buildLabel('Segmento:'),
               DropdownButtonFormField<String>(
-                value: controller.categoriaController.text.isNotEmpty
-                    ? controller.categoriaController.text
+                value: controller.segmentoController.text.isNotEmpty
+                    ? controller.segmentoController.text
                     : null,
                 items: ['Limpeza', 'Expediente', 'Uniforme', 'EPI']
-                    .map((categoria) => DropdownMenuItem(
-                          value: categoria,
-                          child: Text(categoria),
+                    .map((segmento) => DropdownMenuItem(
+                          value: segmento,
+                          child: Text(segmento),
                         ))
                     .toList(),
                 onChanged: (value) {
                   if (value != null) {
                     setState(() {
-                      controller.categoriaController.text = value;
+                      controller.segmentoController.text = value;
                     });
                   }
                 },
-                decoration: decorationTheme('', 'Selecione a categoria', null),
+                decoration: decorationTheme('', 'Selecione o segmento', null),
                 validator: (value) => value == null || value.isEmpty
-                    ? 'Selecione uma categoria'
+                    ? 'Selecione um segmento'
                     : null,
               ),
 

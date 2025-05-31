@@ -5,7 +5,7 @@ class ProductModel {
   final String codigo; // Internal product code (e.g., SKU)
   final String nome; // Product name
   final double valor; // Product price
-  final String categoria; // Product category
+  final String segmento; // Product category
   final String validade; // Expiration date (format: yyyy-MM-dd)
   final int quantidade; // Current stock quantity
   final String descricao; // Description or details
@@ -18,7 +18,7 @@ class ProductModel {
     required this.codigo,
     required this.nome,
     required this.valor,
-    required this.categoria,
+    required this.segmento,
     required this.validade,
     required this.quantidade,
     required this.descricao,
@@ -34,7 +34,7 @@ class ProductModel {
       codigo: map['codigo'] ?? '',
       nome: map['nome'] ?? '',
       valor: double.tryParse(map['valor'].toString()) ?? 0.0,
-      categoria: map['categoria'] ?? '',
+      segmento: map['segmento'] ?? '',
       validade: map['validade']?.toString() ?? '',
       unidade: map['unidade'] ?? '',
       quantidade: int.tryParse(map['quantidade'].toString()) ?? 0,
@@ -51,7 +51,7 @@ class ProductModel {
       'codigo': codigo,
       'nome': nome,
       'valor': valor,
-      'categoria': categoria,
+      'segmento': segmento,
       'validade': validade,
       'unidade': unidade,
       'quantidade': quantidade,

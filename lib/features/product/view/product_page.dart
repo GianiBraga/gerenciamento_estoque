@@ -40,7 +40,7 @@ class ProductPage extends GetView<ProductController> {
 
                 _buildLabel('Categoria:'),
                 _buildField(
-                    controller.categoriaController, 'Categoria', 'Escritório'),
+                    controller.segmentoController, 'Categoria', 'Escritório'),
 
                 _buildLabel('Data de validade:'),
                 _buildField(controller.validadeController, 'Data de validade',
