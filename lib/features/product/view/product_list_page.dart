@@ -20,6 +20,16 @@ class _ProductListPageState extends State<ProductListPage> {
   bool isSearching = false;
   final TextEditingController searchController = TextEditingController();
 
+  String _formatarUnidade(String unidade) {
+    switch (unidade.toLowerCase()) {
+      case 'caixa':
+        return 'cx.';
+      case 'unidade':
+      default:
+        return 'un.';
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -147,7 +157,7 @@ class _ProductListPageState extends State<ProductListPage> {
                                   fontSize: 15, fontWeight: FontWeight.w500)),
                           const SizedBox(height: 4),
                           Text(
-                            'Estoque: ${produto.quantidade} | Código: ${produto.codigo}',
+                            'Estoque: ${produto.quantidade} ${_formatarUnidade(produto.unidade)} | Código: ${produto.codigo}',
                             style: TextStyle(
                                 fontSize: 13, color: Colors.grey[600]),
                           ),

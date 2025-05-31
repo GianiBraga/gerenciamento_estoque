@@ -46,6 +46,10 @@ class ProductPage extends GetView<ProductController> {
                 _buildField(controller.validadeController, 'Data de validade',
                     '20/05/2025'),
 
+                _buildLabel('Unidade:'),
+                _buildField(controller.unidadeController, 'Unidade',
+                    'Ex.: caixa, unidade'),
+
                 _buildLabel('Quantidade:'),
                 _buildField(
                     controller.quantidadeController, 'Quantidade', 'Ex.: 10',

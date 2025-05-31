@@ -24,6 +24,7 @@ class ProductController extends GetxController {
   final validadeController = TextEditingController();
   final quantidadeController = TextEditingController();
   final descricaoController = TextEditingController();
+  final unidadeController = TextEditingController();
 
   /// Service layer to perform CRUD operations with Supabase
   final ProductService _productService = ProductService();
@@ -31,12 +32,12 @@ class ProductController extends GetxController {
   /// Loads all products from Supabase and updates the observable list
   Future<void> loadProducts() async {
     final data = await _productService.getAllProducts();
-    print('Produtos carregados: ${data.length}');
     products.assignAll(data);
   }
 
   /// Saves a new product to Supabase, including optional image upload
-  Future<void> saveProduct({File? imageFile}) async {
+  Future<void> saveProduct(
+      {File? imageFile, String unidade = 'unidade'}) async {
     try {
       String? imageUrl;
 
@@ -59,6 +60,7 @@ class ProductController extends GetxController {
             double.tryParse(valorController.text.replaceAll(',', '.')) ?? 0.0,
         categoria: categoriaController.text,
         validade: _formatarDataParaSQL(validadeController.text),
+        unidade: unidade,
         quantidade: int.tryParse(quantidadeController.text) ?? 0,
         descricao: descricaoController.text,
         imagemUrl: imageUrl,
@@ -81,7 +83,8 @@ class ProductController extends GetxController {
   }
 
   /// Updates an existing product on Supabase and refreshes the local list
-  Future<void> updateProduct(ProductModel original, {File? imageFile}) async {
+  Future<void> updateProduct(ProductModel original,
+      {File? imageFile, required String unidade}) async {
     try {
       String? imageUrl = original.imagemUrl;
 
@@ -105,6 +108,7 @@ class ProductController extends GetxController {
             double.tryParse(valorController.text.replaceAll(',', '.')) ?? 0.0,
         categoria: categoriaController.text,
         validade: _formatarDataParaSQL(validadeController.text),
+        unidade: unidade,
         quantidade: int.tryParse(quantidadeController.text) ?? 0,
         descricao: descricaoController.text,
         imagemUrl: imageUrl,
@@ -112,7 +116,6 @@ class ProductController extends GetxController {
 
       await _productService.updateProduct(updated);
 
-      // Update local observable list reactively
       final index = products.indexWhere((p) => p.id == updated.id);
       if (index != -1) {
         products[index] = updated;
@@ -162,16 +165,15 @@ class ProductController extends GetxController {
     validadeController.clear();
     quantidadeController.clear();
     descricaoController.clear();
+    unidadeController.clear();
   }
 
-  /// Loads products when the controller is first initialized
   @override
   void onInit() {
     super.onInit();
     loadProducts();
   }
 
-  /// Disposes form controllers when the controller is destroyed
   @override
   void onClose() {
     codigoController.dispose();
@@ -181,6 +183,7 @@ class ProductController extends GetxController {
     validadeController.dispose();
     quantidadeController.dispose();
     descricaoController.dispose();
+    unidadeController.dispose();
     super.onClose();
   }
 

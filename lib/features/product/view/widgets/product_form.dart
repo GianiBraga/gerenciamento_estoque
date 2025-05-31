@@ -30,6 +30,10 @@ class _ProductFormState extends State<ProductForm> {
   File? _imagemSelecionada;
   bool _isLoading = false;
 
+  String? unidadeSelecionada;
+
+  final List<String> unidades = ['unidade', 'caixa'];
+
   @override
   void initState() {
     super.initState();
@@ -44,6 +48,7 @@ class _ProductFormState extends State<ProductForm> {
       controller.validadeController.text = p.validade;
       controller.quantidadeController.text = p.quantidade.toString();
       controller.descricaoController.text = p.descricao;
+      unidadeSelecionada = p.unidade;
     }
   }
 
@@ -117,14 +122,13 @@ class _ProductFormState extends State<ProductForm> {
 
               const SizedBox(height: 20),
 
-              // Product form fields
               _buildLabel('Código:'),
               _buildField(controller.codigoController, 'Ex.: 12345...', true),
 
               _buildLabel('Nome:'),
               _buildField(controller.nomeController, 'Ex.: Caneta...', true),
 
-              _buildLabel('Valor R\$:'), // Price input
+              _buildLabel('Valor R\$:'),
               _buildField(controller.valorController, 'R\$ 00.00', false,
                   keyboardType: TextInputType.number),
 
@@ -144,6 +148,23 @@ class _ProductFormState extends State<ProductForm> {
                     onPressed: _selecionarData,
                   ),
                 ),
+              ),
+
+              const SizedBox(height: 12),
+
+              _buildLabel('Unidade de Medida:'),
+              DropdownButtonFormField<String>(
+                value: unidadeSelecionada,
+                decoration: decorationTheme('', 'Selecione a unidade', null),
+                items: unidades
+                    .map((u) => DropdownMenuItem(value: u, child: Text(u)))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    unidadeSelecionada = value;
+                  });
+                },
+                validator: (v) => v == null ? 'Selecione uma unidade' : null,
               ),
 
               const SizedBox(height: 12),
@@ -172,14 +193,12 @@ class _ProductFormState extends State<ProductForm> {
 
               const SizedBox(height: 24),
 
-              // Save and cancel buttons
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    // Cancel button
                     TextButton(
                       onPressed: () =>
                           {controller.clearForm(), Navigator.of(context).pop()},
@@ -189,18 +208,21 @@ class _ProductFormState extends State<ProductForm> {
                       ),
                     ),
                     const SizedBox(width: 8),
-
-                    // Save button with loading indicator
                     ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           setState(() => _isLoading = true);
                           if (widget.produto == null) {
                             await controller.saveProduct(
-                                imageFile: _imagemSelecionada);
+                              imageFile: _imagemSelecionada,
+                              unidade: unidadeSelecionada!,
+                            );
                           } else {
-                            await controller.updateProduct(widget.produto!,
-                                imageFile: _imagemSelecionada);
+                            await controller.updateProduct(
+                              widget.produto!,
+                              imageFile: _imagemSelecionada,
+                              unidade: unidadeSelecionada!,
+                            );
                           }
                           setState(() => _isLoading = false);
                           widget.onSaved();
@@ -232,7 +254,6 @@ class _ProductFormState extends State<ProductForm> {
     );
   }
 
-  /// Builds a section label with padding
   Widget _buildLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(top: 12, bottom: 4),
@@ -240,7 +261,6 @@ class _ProductFormState extends State<ProductForm> {
     );
   }
 
-  /// Builds a standard text input field
   Widget _buildField(
       TextEditingController controller, String hint, bool required,
       {TextInputType keyboardType = TextInputType.text}) {

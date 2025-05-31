@@ -10,6 +10,7 @@ class ProductModel {
   final int quantidade; // Current stock quantity
   final String descricao; // Description or details
   final String? imagemUrl; // URL of the product image (optional)
+  final String unidade;
 
   ProductModel({
     this.id,
@@ -21,6 +22,7 @@ class ProductModel {
     required this.quantidade,
     required this.descricao,
     this.imagemUrl,
+    required this.unidade,
   });
 
   /// Creates a [ProductModel] instance from a Supabase response map.
@@ -32,6 +34,7 @@ class ProductModel {
       valor: double.tryParse(map['valor'].toString()) ?? 0.0,
       categoria: map['categoria'] ?? '',
       validade: map['validade']?.toString() ?? '',
+      unidade: map['unidade'] ?? '',
       quantidade: int.tryParse(map['quantidade'].toString()) ?? 0,
       descricao: map['descricao'] ?? '',
       imagemUrl: map['imagem_url'],
@@ -47,6 +50,7 @@ class ProductModel {
       'valor': valor,
       'categoria': categoria,
       'validade': validade,
+      'unidade': unidade,
       'quantidade': quantidade,
       'descricao': descricao,
       'imagem_url': imagemUrl,
