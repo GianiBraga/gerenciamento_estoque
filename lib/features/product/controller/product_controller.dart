@@ -25,6 +25,7 @@ class ProductController extends GetxController {
   final quantidadeController = TextEditingController();
   final descricaoController = TextEditingController();
   final unidadeController = TextEditingController();
+  final estoqueMinimoController = TextEditingController();
 
   /// Service layer to perform CRUD operations with Supabase
   final ProductService _productService = ProductService();
@@ -64,6 +65,7 @@ class ProductController extends GetxController {
         quantidade: int.tryParse(quantidadeController.text) ?? 0,
         descricao: descricaoController.text,
         imagemUrl: imageUrl,
+        estoqueMinimo: int.tryParse(estoqueMinimoController.text) ?? 0,
       );
 
       await _productService.insertProduct(product);
@@ -110,6 +112,7 @@ class ProductController extends GetxController {
         validade: _formatarDataParaSQL(validadeController.text),
         unidade: unidade,
         quantidade: int.tryParse(quantidadeController.text) ?? 0,
+        estoqueMinimo: int.tryParse(estoqueMinimoController.text) ?? 0,
         descricao: descricaoController.text,
         imagemUrl: imageUrl,
       );
@@ -166,6 +169,7 @@ class ProductController extends GetxController {
     quantidadeController.clear();
     descricaoController.clear();
     unidadeController.clear();
+    estoqueMinimoController.clear();
   }
 
   @override
@@ -184,6 +188,7 @@ class ProductController extends GetxController {
     quantidadeController.dispose();
     descricaoController.dispose();
     unidadeController.dispose();
+    estoqueMinimoController.dispose();
     super.onClose();
   }
 

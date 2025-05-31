@@ -48,6 +48,7 @@ class _ProductFormState extends State<ProductForm> {
       controller.validadeController.text = p.validade;
       controller.quantidadeController.text = p.quantidade.toString();
       controller.descricaoController.text = p.descricao;
+      controller.estoqueMinimoController.text = p.estoqueMinimo.toString();
       unidadeSelecionada = p.unidade;
     }
   }
@@ -181,6 +182,19 @@ class _ProductFormState extends State<ProductForm> {
                 },
               ),
 
+              const SizedBox(height: 12),
+
+              _buildLabel('Estoque mínimo:'),
+              TextFormField(
+                controller: controller.estoqueMinimoController,
+                decoration: decorationTheme('', 'Ex.: 5', null),
+                keyboardType: TextInputType.number,
+                validator: (v) {
+                  if (v == null || v.isEmpty) return 'Informe o estoque mínimo';
+                  if (int.tryParse(v) == null) return 'Número inválido';
+                  return null;
+                },
+              ),
               const SizedBox(height: 12),
 
               _buildLabel('Descrição:'),
