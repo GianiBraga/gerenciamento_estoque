@@ -134,7 +134,28 @@ class _ProductFormState extends State<ProductForm> {
                   keyboardType: TextInputType.number),
 
               _buildLabel('Categoria:'),
-              _buildField(controller.categoriaController, 'Escritório', false),
+              DropdownButtonFormField<String>(
+                value: controller.categoriaController.text.isNotEmpty
+                    ? controller.categoriaController.text
+                    : null,
+                items: ['Limpeza', 'Expediente', 'Uniforme', 'EPI']
+                    .map((categoria) => DropdownMenuItem(
+                          value: categoria,
+                          child: Text(categoria),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() {
+                      controller.categoriaController.text = value;
+                    });
+                  }
+                },
+                decoration: decorationTheme('', 'Selecione a categoria', null),
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Selecione uma categoria'
+                    : null,
+              ),
 
               _buildLabel('Data de validade:'),
               TextFormField(
