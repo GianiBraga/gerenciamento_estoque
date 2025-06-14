@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gerenciamento_estoque/core/widgets/user_session_util.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 import '../../product/controller/product_controller.dart';
 import '../../product/model/product_model.dart';
 import '../data/movement_service.dart';
@@ -14,10 +14,9 @@ class MovementController extends GetxController {
   // Form input controllers
   final codigoController = TextEditingController();
   final quantidadeController = TextEditingController();
-  final matriculaController =
-      TextEditingController(); // Novo: matrícula do funcionário
+  final matriculaController = TextEditingController();
 
-  // Reactive variable for movement type ("Entrada" ou "Saída")
+  // Reactive variable for movement type ("Entrada" or "Saída")
   final RxString tipoMovimentacao = 'Entrada'.obs;
 
   // Loading state during save operation
@@ -26,14 +25,26 @@ class MovementController extends GetxController {
   // Service layer responsible for database access
   final MovementService _service = MovementService();
 
+  @override
+  void onClose() {
+    codigoController.dispose();
+    quantidadeController.dispose();
+    matriculaController.dispose();
+    super.onClose();
+  }
+
   /// Validates and registers a new inventory movement in Supabase.
+  /// Forces 'Saída' for common users, regardless of UI selection.
   Future<void> saveMovement() async {
     isLoading.value = true;
 
+    // Force movement type based on user role
+    final role = await UserSessionUtil.getUserRole();
+    final selectedTipo = (role == 'user') ? 'Saída' : tipoMovimentacao.value;
+
     final codigo = codigoController.text.trim();
     final qtdText = quantidadeController.text.trim();
-    final matricula = matriculaController.text.trim(); // Novo: ler matrícula
-    final tipo = tipoMovimentacao.value;
+    final matricula = matriculaController.text.trim();
 
     // Validate required fields
     if (matricula.isEmpty || codigo.isEmpty || qtdText.isEmpty) {
@@ -73,10 +84,10 @@ class MovementController extends GetxController {
       final movement = MovementModel(
         produtoId: produto.id!,
         quantidade: quantidade,
-        tipo: _formatarTipoParaSupabase(tipo),
+        tipo: _formatarTipoParaSupabase(selectedTipo),
         usuarioId: userId,
         data: DateTime.now(),
-        funcionarioMatricula: matricula, // Novo: incluir matrícula
+        funcionarioMatricula: matricula,
       );
 
       // Register movement and update product quantity
@@ -114,18 +125,9 @@ class MovementController extends GetxController {
 
   /// Resets the form fields after a movement is saved.
   void clearForm() {
-    matriculaController.clear(); // Limpa matrícula
+    matriculaController.clear();
     codigoController.clear();
     quantidadeController.clear();
     tipoMovimentacao.value = 'Entrada';
-  }
-
-  /// Dispose controllers when the controller is destroyed.
-  @override
-  void onClose() {
-    codigoController.dispose();
-    quantidadeController.dispose();
-    matriculaController.dispose(); // Dispose matrículaController
-    super.onClose();
   }
 }
