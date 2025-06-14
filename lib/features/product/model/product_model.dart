@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 /// Data model representing a product in the inventory.
 /// Used for communication between the application and Supabase.
 class ProductModel {
@@ -7,11 +9,11 @@ class ProductModel {
   final double valor; // Product price
   final String segmento; // Product category
   final String? validade; // Expiration date (format: yyyy-MM-dd)
+  final String unidade; // Unit of measure
   final int quantidade; // Current stock quantity
+  final int estoqueMinimo; // Minimum stock threshold
   final String descricao; // Description or details
   final String? imagemUrl; // URL of the product image (optional)
-  final String unidade;
-  final int estoqueMinimo;
 
   ProductModel({
     this.id,
@@ -20,27 +22,33 @@ class ProductModel {
     required this.valor,
     required this.segmento,
     required this.validade,
+    required this.unidade,
     required this.quantidade,
+    required this.estoqueMinimo,
     required this.descricao,
     this.imagemUrl,
-    required this.unidade,
-    required this.estoqueMinimo,
   });
 
   /// Creates a [ProductModel] instance from a Supabase response map.
   factory ProductModel.fromMap(Map<String, dynamic> map) {
+    // Decode 'nome' handling UTF-8 bytes or String
+    final rawNome = map['nome'];
+    final nome = rawNome is List<int>
+        ? utf8.decode(rawNome)
+        : (rawNome as String? ?? '');
+
     return ProductModel(
       id: map['id']?.toString(),
-      codigo: map['codigo'] ?? '',
-      nome: map['nome'] ?? '',
+      codigo: map['codigo'] as String? ?? '',
+      nome: nome,
       valor: double.tryParse(map['valor'].toString()) ?? 0.0,
-      segmento: map['segmento'] ?? '',
-      validade: map['validade']?.toString() ?? '',
-      unidade: map['unidade'] ?? '',
+      segmento: map['segmento'] as String? ?? '',
+      validade: map['validade']?.toString(),
+      unidade: map['unidade'] as String? ?? '',
       quantidade: int.tryParse(map['quantidade'].toString()) ?? 0,
-      descricao: map['descricao'] ?? '',
-      imagemUrl: map['imagem_url'],
       estoqueMinimo: int.tryParse(map['estoque_minimo'].toString()) ?? 0,
+      descricao: map['descricao'] as String? ?? '',
+      imagemUrl: map['imagem_url'] as String?,
     );
   }
 
