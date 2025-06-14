@@ -8,7 +8,7 @@ class SnackbarUtil {
     required String title,
     required String message,
     required ContentType contentType,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 1),
   }) {
     return SnackBar(
       elevation: 0,
@@ -31,7 +31,7 @@ class SnackbarUtil {
   static SnackBar success({
     required String title,
     required String message,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 1),
   }) {
     return _build(
       title: title,
@@ -45,7 +45,7 @@ class SnackbarUtil {
   static SnackBar error({
     required String title,
     required String message,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 1),
   }) {
     return _build(
       title: title,
@@ -59,7 +59,7 @@ class SnackbarUtil {
   static SnackBar warning({
     required String title,
     required String message,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 1),
   }) {
     return _build(
       title: title,
@@ -73,7 +73,7 @@ class SnackbarUtil {
   static SnackBar info({
     required String title,
     required String message,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 1),
   }) {
     return _build(
       title: title,

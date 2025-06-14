@@ -28,7 +28,7 @@ class InOutPage extends GetView<MovementController> {
           ),
         ),
         title: const Text(
-          'Entrada e Saída',
+          'Movimentações',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -41,7 +41,11 @@ class InOutPage extends GetView<MovementController> {
               }
               if (snapshot.data == 'user') {
                 return IconButton(
-                  icon: const Icon(Icons.logout),
+                  icon: const Icon(
+                    Icons.logout_rounded,
+                    size: 28,
+                    color: Color(0xFF1C4C9C),
+                  ),
                   onPressed: () async {
                     await UserSessionUtil.clearSession();
                     Get.offAllNamed('/login');
@@ -77,7 +81,7 @@ class InOutPage extends GetView<MovementController> {
                     ),
                     child: const Center(
                       child: Text(
-                        'Selecionar Funcionário e Produto',
+                        'Dados da Movimentação',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -198,36 +202,61 @@ class InOutPage extends GetView<MovementController> {
 
                           const SizedBox(height: 16),
 
-                          // Dropdown para tipo de movimentação (Entrada ou Saída)
-                          Obx(() => DropdownButtonFormField<String>(
-                                value: controller.tipoMovimentacao.value,
-                                decoration: decorationTheme(
-                                  'Tipo de Movimentação',
-                                  '',
-                                  null,
-                                ),
-                                items: ['Entrada', 'Saída']
-                                    .map((tipo) => DropdownMenuItem(
-                                          value: tipo,
-                                          child: Text(
-                                            tipo,
-                                            style:
-                                                const TextStyle(fontSize: 14),
-                                          ),
-                                        ))
-                                    .toList(),
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    controller.tipoMovimentacao.value = value;
-                                  }
-                                },
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                ),
-                                dropdownColor: Colors.white,
-                                isDense: true,
-                              )),
+                          // Tipo de movimentação: fixo em 'Saída' para user, dropdown p/ admin
+                          FutureBuilder<String?>(
+                            future: UserSessionUtil.getUserRole(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState !=
+                                  ConnectionState.done) {
+                                return const SizedBox.shrink();
+                              }
+                              final role = snapshot.data;
+                              if (role == 'user') {
+                                // Força 'Saída' e bloqueia edição
+                                controller.tipoMovimentacao.value = 'Saída';
+                                return TextFormField(
+                                  initialValue: 'Saída',
+                                  readOnly: true,
+                                  decoration: decorationTheme(
+                                    'Tipo de Movimentação',
+                                    '',
+                                    null,
+                                  ),
+                                );
+                              }
+                              // Admin pode escolher
+                              return Obx(() => DropdownButtonFormField<String>(
+                                    value: controller.tipoMovimentacao.value,
+                                    decoration: decorationTheme(
+                                      'Tipo de Movimentação',
+                                      '',
+                                      null,
+                                    ),
+                                    items: ['Entrada', 'Saída']
+                                        .map((tipo) => DropdownMenuItem(
+                                              value: tipo,
+                                              child: Text(
+                                                tipo,
+                                                style: const TextStyle(
+                                                    fontSize: 14),
+                                              ),
+                                            ))
+                                        .toList(),
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        controller.tipoMovimentacao.value =
+                                            value;
+                                      }
+                                    },
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                    ),
+                                    dropdownColor: Colors.white,
+                                    isDense: true,
+                                  ));
+                            },
+                          ),
 
                           const SizedBox(height: 24),
 
