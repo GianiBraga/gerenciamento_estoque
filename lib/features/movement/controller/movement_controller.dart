@@ -14,8 +14,10 @@ class MovementController extends GetxController {
   // Form input controllers
   final codigoController = TextEditingController();
   final quantidadeController = TextEditingController();
+  final matriculaController =
+      TextEditingController(); // Novo: matrícula do funcionário
 
-  // Reactive variable for movement type ("Entrada" or "Saída")
+  // Reactive variable for movement type ("Entrada" ou "Saída")
   final RxString tipoMovimentacao = 'Entrada'.obs;
 
   // Loading state during save operation
@@ -30,12 +32,16 @@ class MovementController extends GetxController {
 
     final codigo = codigoController.text.trim();
     final qtdText = quantidadeController.text.trim();
+    final matricula = matriculaController.text.trim(); // Novo: ler matrícula
     final tipo = tipoMovimentacao.value;
 
     // Validate required fields
-    if (codigo.isEmpty || qtdText.isEmpty) {
-      Get.snackbar('Atenção', 'Preencha todos os campos.',
-          snackPosition: SnackPosition.BOTTOM);
+    if (matricula.isEmpty || codigo.isEmpty || qtdText.isEmpty) {
+      Get.snackbar(
+        'Atenção',
+        'Preencha todos os campos (matrícula, código, quantidade).',
+        snackPosition: SnackPosition.BOTTOM,
+      );
       isLoading.value = false;
       return;
     }
@@ -43,8 +49,11 @@ class MovementController extends GetxController {
     // Validate quantity
     final quantidade = int.tryParse(qtdText);
     if (quantidade == null || quantidade <= 0) {
-      Get.snackbar('Erro', 'Quantidade inválida.',
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Erro',
+        'Quantidade inválida.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
       isLoading.value = false;
       return;
     }
@@ -67,6 +76,7 @@ class MovementController extends GetxController {
         tipo: _formatarTipoParaSupabase(tipo),
         usuarioId: userId,
         data: DateTime.now(),
+        funcionarioMatricula: matricula, // Novo: incluir matrícula
       );
 
       // Register movement and update product quantity
@@ -77,25 +87,20 @@ class MovementController extends GetxController {
       await productController.loadProducts();
 
       clearForm();
-      Get.snackbar('Sucesso', 'Movimentação registrada com sucesso.',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green.withOpacity(0.40));
-      // Get.rawSnackbar(
-      //   messageText: const Text(
-      //     'Operação concluída!',
-      //     style: TextStyle(color: Colors.white),
-      //   ),
-      //   backgroundColor: Colors.green.withOpacity(0.85),
-      //   snackPosition: SnackPosition.TOP,
-      //   margin: const EdgeInsets.all(16),
-      //   borderRadius: 12,
-      //   duration: const Duration(seconds: 3),
-      // );
+      Get.snackbar(
+        'Sucesso',
+        'Movimentação registrada com sucesso.',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green.withOpacity(0.40),
+      );
     } catch (e) {
       // Show error if something goes wrong
-      Get.snackbar('Erro', 'Erro ao registrar movimentação: $e',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.red.withOpacity(0.40));
+      Get.snackbar(
+        'Erro',
+        'Erro ao registrar movimentação: $e',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red.withOpacity(0.40),
+      );
     } finally {
       isLoading.value = false;
     }
@@ -109,16 +114,18 @@ class MovementController extends GetxController {
 
   /// Resets the form fields after a movement is saved.
   void clearForm() {
+    matriculaController.clear(); // Limpa matrícula
     codigoController.clear();
     quantidadeController.clear();
     tipoMovimentacao.value = 'Entrada';
   }
 
-  /// Dispose text controllers when the controller is destroyed.
+  /// Dispose controllers when the controller is destroyed.
   @override
   void onClose() {
     codigoController.dispose();
     quantidadeController.dispose();
+    matriculaController.dispose(); // Dispose matrículaController
     super.onClose();
   }
 }

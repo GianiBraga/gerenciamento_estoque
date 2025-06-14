@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:gerenciamento_estoque/core/widgets/decoration.dart';
 import 'package:gerenciamento_estoque/core/widgets/user_session_util.dart';
 import 'package:get/get.dart';
-import '../../movement/view/modals/product_search_modal.dart';
+import 'package:gerenciamento_estoque/features/movement/view/modals/product_search_modal.dart';
+import 'package:gerenciamento_estoque/features/employee/views/modals/employee_search_modal.dart';
 import '../controller/movement_controller.dart';
 
 /// Page for registering stock entries and exits (movimentações).
-/// Includes a form with product code, quantity, and movement type.
+/// Includes a form with product code, quantity, employee matricula, and movement type.
 /// Integrates with [MovementController] using GetX.
 class InOutPage extends GetView<MovementController> {
   const InOutPage({super.key});
@@ -76,7 +77,7 @@ class InOutPage extends GetView<MovementController> {
                     ),
                     child: const Center(
                       child: Text(
-                        'Selecionar Produto',
+                        'Selecionar Funcionário e Produto',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -86,7 +87,6 @@ class InOutPage extends GetView<MovementController> {
                     ),
                   ),
 
-                  // Movement form body
                   Padding(
                     padding: const EdgeInsets.all(24),
                     child: Form(
@@ -94,7 +94,50 @@ class InOutPage extends GetView<MovementController> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Código do produto + botão de pesquisa (não implementado)
+                          // Matrícula do funcionário + botão de pesquisa
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: controller.matriculaController,
+                                  decoration: decorationTheme(
+                                    'Matrícula do Funcionário',
+                                    '',
+                                    null,
+                                  ),
+                                  keyboardType: TextInputType.text,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Informe a matrícula do funcionário';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.search,
+                                  color: Color(0xFF1C4C9C),
+                                ),
+                                onPressed: () async {
+                                  await showDialog(
+                                    context: context,
+                                    builder: (context) => EmployeeSearchModal(
+                                      onSelect: (matricula) {
+                                        controller.matriculaController.text =
+                                            matricula;
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // Código do produto + botão de pesquisa
                           Row(
                             children: [
                               Expanded(

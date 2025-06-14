@@ -7,6 +7,7 @@ class MovementModel {
   final String tipo; // Type of movement: 'entrada' or 'saida'
   final String? usuarioId; // ID of the user who performed the movement
   final DateTime? data; // Timestamp of the movement
+  final String funcionarioMatricula; // Matrícula do funcionário responsável
 
   MovementModel({
     this.id,
@@ -15,6 +16,7 @@ class MovementModel {
     required this.tipo,
     this.usuarioId,
     this.data,
+    required this.funcionarioMatricula,
   });
 
   /// Creates a MovementModel instance from a Supabase record (Map).
@@ -26,6 +28,7 @@ class MovementModel {
       tipo: map['tipo'] ?? '',
       usuarioId: map['usuario_id'],
       data: map['data'] != null ? DateTime.parse(map['data']) : null,
+      funcionarioMatricula: map['funcionario_matricula'] as String? ?? '',
     );
   }
 
@@ -37,6 +40,7 @@ class MovementModel {
       'quantidade': quantidade,
       'tipo': tipo,
       'usuario_id': usuarioId,
+      'funcionario_matricula': funcionarioMatricula,
       if (data != null) 'data': data!.toIso8601String(),
     };
   }

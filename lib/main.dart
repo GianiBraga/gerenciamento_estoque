@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_estoque/features/auth/controller/login_controller.dart';
 import 'package:gerenciamento_estoque/features/auth/view/login_page.dart';
+import 'package:gerenciamento_estoque/features/employee/controller/employee_controller.dart';
 import 'package:gerenciamento_estoque/features/menu/menu_page.dart';
 import 'package:gerenciamento_estoque/features/movement/controller/movement_controller.dart';
 import 'package:gerenciamento_estoque/features/movement/view/in_out_page.dart';
@@ -25,6 +26,7 @@ Future<void> main() async {
         Get.put(ProductController()); // Controls product data and operations
         Get.put(MovementController()); // Manages inventory movements
         Get.put(LoginController()); // Handles authentication logic
+        Get.put(EmployeeController());
       }),
 
       // Use rota nomeada em vez de home:
