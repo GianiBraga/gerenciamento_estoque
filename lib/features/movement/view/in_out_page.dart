@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_estoque/core/widgets/decoration.dart';
-import 'package:gerenciamento_estoque/features/movement/view/modals/product_search_modal.dart';
+import 'package:gerenciamento_estoque/core/widgets/user_session_util.dart';
 import 'package:get/get.dart';
+import '../../movement/view/modals/product_search_modal.dart';
 import '../controller/movement_controller.dart';
 
 /// Page for registering stock entries and exits (movimentações).
@@ -30,6 +31,26 @@ class InOutPage extends GetView<MovementController> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        actions: [
+          FutureBuilder<String?>(
+            future: UserSessionUtil.getUserRole(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return const SizedBox.shrink();
+              }
+              if (snapshot.data == 'user') {
+                return IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () async {
+                    await UserSessionUtil.clearSession();
+                    Get.offAllNamed('/login');
+                  },
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -95,8 +116,10 @@ class InOutPage extends GetView<MovementController> {
                               ),
                               const SizedBox(width: 8),
                               IconButton(
-                                icon: const Icon(Icons.search,
-                                    color: Color(0xFF1C4C9C)),
+                                icon: const Icon(
+                                  Icons.search,
+                                  color: Color(0xFF1C4C9C),
+                                ),
                                 onPressed: () async {
                                   await showDialog(
                                     context: context,

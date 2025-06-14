@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart'; // para debugPrint
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_estoque/features/movement/view/in_out_page.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/widgets/snackbar_util.dart';
@@ -41,17 +43,42 @@ class LoginController extends GetxController {
             .select('nome')
             .eq('id', userId)
             .single();
-
-        final nome = userResponse['nome'];
+        final nome = userResponse['nome'] as String;
         await UserSessionUtil.saveUserName(nome);
 
-        // Show success snackbar and navigate to MenuPage
+        // Fetch the user's role from the database
+        final roleResponse = await Supabase.instance.client
+            .from('usuarios')
+            .select('role')
+            .eq('id', userId)
+            .single();
+        final role = roleResponse['role'] as String;
+        // Salva o nível de acesso (role) na sessão
+        await UserSessionUtil.saveUserRole(role);
+
+        // Clear input fields after successful login
+        _clearFields();
+
+        // Show success snackbar and navigate to the appropriate page
         _showSnackbar(SnackbarUtil.success(
           title: 'Sucesso!',
           message: 'Login realizado com sucesso.',
         )).closed.then((_) {
-          Get.offAll(() => const MenuPage(),
-              transition: Transition.fadeIn, duration: 800.milliseconds);
+          if (role == 'admin') {
+            // Admin vê todas as telas
+            Get.offAll(
+              () => const MenuPage(),
+              transition: Transition.fadeIn,
+              duration: 800.milliseconds,
+            );
+          } else {
+            // Usuário comum só vê Movimentações
+            Get.offAll(
+              () => const InOutPage(),
+              transition: Transition.fadeIn,
+              duration: 800.milliseconds,
+            );
+          }
         });
       } else {
         // Show generic login failure
@@ -60,19 +87,27 @@ class LoginController extends GetxController {
           message: 'Falha ao realizar o login.',
         ));
       }
-    } on AuthException catch (_) {
+    } on AuthException catch (e) {
       // Supabase-auth specific error (e.g., wrong password)
+      debugPrint('AuthException in login(): $e');
       _showSnackbar(SnackbarUtil.error(
         title: 'Falha ao realizar o login!',
-        message: 'E-mail ou senha incorreto.',
+        message: e.message,
       ));
-    } catch (_) {
-      // Fallback for unexpected errors
+    } catch (e, stack) {
+      // Fallback for unexpected errors: log completo e mostra mensagem
+      debugPrint('Erro inesperado em LoginController.login(): $e\n$stack');
       _showSnackbar(SnackbarUtil.error(
         title: 'Erro inesperado',
-        message: 'Não foi possível completar o login.',
+        message: e.toString(),
       ));
     }
+  }
+
+  /// Clears the email and password input fields.
+  void _clearFields() {
+    emailController.clear();
+    senhaController.clear();
   }
 
   /// Utility to show a snackbar using the current Get context.
