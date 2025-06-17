@@ -17,7 +17,13 @@ class MovementController extends GetxController {
   final matriculaController = TextEditingController();
 
   // Reactive variable for movement type ("Entrada" or "Saída")
-  final RxString tipoMovimentacao = 'Entrada'.obs;
+  final RxString tipoMovimentacao = 'Saída'.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    tipoMovimentacao.value = 'Saída'; // Garante que sempre começa como 'Saída'
+  }
 
   // Loading state during save operation
   final RxBool isLoading = false.obs;

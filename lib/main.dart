@@ -6,11 +6,14 @@ import 'package:gerenciamento_estoque/features/menu/menu_page.dart';
 import 'package:gerenciamento_estoque/features/movement/controller/movement_controller.dart';
 import 'package:gerenciamento_estoque/features/movement/view/in_out_page.dart';
 import 'package:gerenciamento_estoque/features/product/controller/product_controller.dart';
+import 'package:gerenciamento_estoque/features/welcome/view/welcome_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get/get.dart';
 
 //Remover o usuario comum para acesso.
 //Fazer testes offline
+// Fazer teste na edição de produtos.
+// Possiveis nomes: SENAI Controla+; SENAI SmartStock;
 Future<void> main() async {
   // Initialize Supabase with project URL and anon key
   await Supabase.initialize(
@@ -32,11 +35,12 @@ Future<void> main() async {
       }),
 
       // Use rota nomeada em vez de home:
-      initialRoute: '/login',
+      initialRoute: '/welcome',
       getPages: [
         GetPage(name: '/login', page: () => const LoginPage()),
         GetPage(name: '/in_out', page: () => const InOutPage()),
         GetPage(name: '/menu', page: () => const MenuPage()),
+        GetPage(name: '/welcome', page: () => const WelcomePage()),
         // adicione outras páginas aqui se necessário
       ],
     ),

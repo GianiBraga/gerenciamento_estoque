@@ -211,20 +211,40 @@ class InOutPage extends GetView<MovementController> {
                                 return const SizedBox.shrink();
                               }
                               final role = snapshot.data;
-                              if (role == 'user') {
-                                // Força 'Saída' e bloqueia edição
-                                controller.tipoMovimentacao.value = 'Saída';
-                                return TextFormField(
-                                  initialValue: 'Saída',
-                                  readOnly: true,
-                                  decoration: decorationTheme(
-                                    'Tipo de Movimentação',
-                                    '',
-                                    null,
-                                  ),
-                                );
+                              print('Role recuperado: $role');
+
+                              if (role == 'admin') {
+                                // Admin pode escolher
+                                return Obx(() =>
+                                    DropdownButtonFormField<String>(
+                                      value: controller.tipoMovimentacao.value,
+                                      decoration: decorationTheme(
+                                        'Tipo de Movimentação',
+                                        '',
+                                        null,
+                                      ),
+                                      items: ['Entrada', 'Saída']
+                                          .map((tipo) => DropdownMenuItem(
+                                                value: tipo,
+                                                child: Text(tipo,
+                                                    style: const TextStyle(
+                                                        fontSize: 14)),
+                                              ))
+                                          .toList(),
+                                      onChanged: (value) {
+                                        if (value != null) {
+                                          controller.tipoMovimentacao.value =
+                                              value;
+                                        }
+                                      },
+                                      style: const TextStyle(
+                                          fontSize: 16, color: Colors.black),
+                                      dropdownColor: Colors.white,
+                                      isDense: true,
+                                    ));
                               }
-                              // Admin pode escolher
+
+                              // Usuário comum vê "Saída" fixo e desabilitado
                               return Obx(() => DropdownButtonFormField<String>(
                                     value: controller.tipoMovimentacao.value,
                                     decoration: decorationTheme(
@@ -232,28 +252,20 @@ class InOutPage extends GetView<MovementController> {
                                       '',
                                       null,
                                     ),
-                                    items: ['Entrada', 'Saída']
-                                        .map((tipo) => DropdownMenuItem(
-                                              value: tipo,
-                                              child: Text(
-                                                tipo,
-                                                style: const TextStyle(
-                                                    fontSize: 14),
-                                              ),
-                                            ))
-                                        .toList(),
-                                    onChanged: (value) {
-                                      if (value != null) {
-                                        controller.tipoMovimentacao.value =
-                                            value;
-                                      }
-                                    },
+                                    items: [
+                                      DropdownMenuItem(
+                                        value: 'Saída',
+                                        child: Text('Saída',
+                                            style:
+                                                const TextStyle(fontSize: 14)),
+                                      ),
+                                    ],
+                                    onChanged: null,
                                     style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                    ),
+                                        fontSize: 16, color: Colors.black),
                                     dropdownColor: Colors.white,
                                     isDense: true,
+                                    // enabled: false,
                                   ));
                             },
                           ),
