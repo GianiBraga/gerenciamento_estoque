@@ -9,6 +9,8 @@ import 'package:gerenciamento_estoque/features/product/controller/product_contro
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get/get.dart';
 
+//Remover o usuario comum para acesso.
+//Fazer testes offline
 Future<void> main() async {
   // Initialize Supabase with project URL and anon key
   await Supabase.initialize(
