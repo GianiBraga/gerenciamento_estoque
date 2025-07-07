@@ -48,7 +48,7 @@ class InOutPage extends GetView<MovementController> {
                   ),
                   onPressed: () async {
                     await UserSessionUtil.clearSession();
-                    Get.offAllNamed('/login');
+                    Get.offAllNamed('/welcome');
                   },
                 );
               }
@@ -109,7 +109,7 @@ class InOutPage extends GetView<MovementController> {
                                     '',
                                     null,
                                   ),
-                                  keyboardType: TextInputType.text,
+                                  keyboardType: TextInputType.number,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Informe a matrícula do funcionário';
