@@ -3,6 +3,7 @@ import 'package:gerenciamento_estoque/core/widgets/user_session_util.dart';
 import 'package:gerenciamento_estoque/features/movement/view/in_out_page.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+// ajuste o caminho conforme onde colocou
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -13,7 +14,7 @@ class WelcomePage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Split background: top blue with rounded bottom, bottom white
+          // Fundo dividido: parte superior azul arredondada, parte inferior branca
           Column(
             children: [
               Container(
@@ -26,18 +27,17 @@ class WelcomePage extends StatelessWidget {
                   ),
                 ),
               ),
-              Expanded(
-                child: Container(color: Colors.white),
-              ),
+              Expanded(child: Container(color: Colors.white)),
             ],
           ),
-          // Content overlay
+
+          // Conteúdo principal
           Center(
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Hero logo
+                  // Logo com Hero
                   Hero(
                     tag: 'logo-hero',
                     child: Image.asset(
@@ -47,15 +47,20 @@ class WelcomePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Lottie animation
-                  Lottie.asset(
-                    'assets/animations/stock.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.contain,
+
+                  // Animação Lottie com cantos arredondados
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Lottie.asset(
+                      'assets/animations/stock.json',
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   const SizedBox(height: 16),
-                  // Title
+
+                  // Título
                   const Text(
                     'SENAI SmartStock',
                     style: TextStyle(
@@ -65,7 +70,8 @@ class WelcomePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  // Button with icon
+
+                  // Botão principal com ícone
                   ElevatedButton.icon(
                     onPressed: () async {
                       await UserSessionUtil.saveUserRole('user');
@@ -75,24 +81,43 @@ class WelcomePage extends StatelessWidget {
                         duration: const Duration(milliseconds: 800),
                       );
                     },
-                    icon: const Icon(Icons.arrow_forward),
-                    label: const Text('Vamos lá!'),
+                    icon: const Icon(Icons.arrow_forward, color: Colors.white),
+                    label: const Text('Vamos lá!',
+                        style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1C4C9C),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       minimumSize: const Size(200, 48),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Hero footer logo
+
+                  // Logo de rodapé com Hero
                   Hero(
                     tag: 'footer-logo-hero',
                     child: Image.asset(
                       'assets/images/SENAI_Descritivo.png',
                       width: 80,
                       height: 80,
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Botão de acesso restrito
+                  TextButton(
+                    onPressed: () {
+                      Get.offAllNamed('/login');
+                    },
+                    child: const Text(
+                      'Acesso Restrito',
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Color(0xFF1C4C9C),
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ],

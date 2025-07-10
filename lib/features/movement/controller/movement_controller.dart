@@ -20,10 +20,21 @@ class MovementController extends GetxController {
   final RxString tipoMovimentacao = 'Saída'.obs;
 
   @override
-  void onInit() {
-    super.onInit();
-    tipoMovimentacao.value = 'Saída'; // Garante que sempre começa como 'Saída'
+  void onReady() async {
+    super.onReady();
+    final role = (await UserSessionUtil.getUserRole())?.trim().toLowerCase();
+    if (role != 'admin') {
+      tipoMovimentacao.value = 'Saída';
+    }
   }
+  // void onInit() async {
+  //   super.onInit();
+  //   final role = (await UserSessionUtil.getUserRole())?.trim().toLowerCase();
+  //   if (role != 'admin') {
+  //     tipoMovimentacao.value = 'Saída';
+  //   }
+  //   tipoMovimentacao.value = 'Saída'; // Garante que sempre começa como 'Saída'
+  // }
 
   // Loading state during save operation
   final RxBool isLoading = false.obs;
