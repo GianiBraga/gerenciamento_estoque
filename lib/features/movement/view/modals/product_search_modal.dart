@@ -24,7 +24,9 @@ class _ProductSearchModalState extends State<ProductSearchModal> {
   @override
   void initState() {
     super.initState();
-    resultados = controller.products;
+    // Inicializa resultados em ordem alfabética
+    resultados = List<ProductModel>.from(controller.products)
+      ..sort((a, b) => a.nome.toLowerCase().compareTo(b.nome.toLowerCase()));
     searchController.addListener(_filterList);
   }
 
@@ -32,15 +34,18 @@ class _ProductSearchModalState extends State<ProductSearchModal> {
     final query = searchController.text.toLowerCase();
     setState(() {
       resultados = controller.products.where((p) {
-        return p.nome.toLowerCase().contains(query) ||
-            p.codigo.toLowerCase().contains(query) ||
-            p.descricao.toLowerCase().contains(query);
-      }).toList();
+        final nomeMatch = p.nome.toLowerCase().contains(query);
+        final codigoMatch = (p.codigo.toLowerCase()).contains(query);
+        final descMatch = (p.descricao.toLowerCase()).contains(query);
+        return nomeMatch || codigoMatch || descMatch;
+      }).toList()
+        ..sort((a, b) => a.nome.toLowerCase().compareTo(b.nome.toLowerCase()));
     });
   }
 
   @override
   void dispose() {
+    searchController.removeListener(_filterList);
     searchController.dispose();
     super.dispose();
   }
@@ -93,21 +98,23 @@ class _ProductSearchModalState extends State<ProductSearchModal> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: resultados.length,
-                itemBuilder: (context, index) {
-                  final produto = resultados[index];
-                  return ListTile(
-                    leading: const Icon(Icons.inventory_2_outlined),
-                    title: Text(produto.nome),
-                    subtitle: Text('Código: ${produto.codigo}'),
-                    onTap: () {
-                      widget.onSelect(produto.codigo);
-                      Navigator.of(context).pop();
-                    },
-                  );
-                },
-              ),
+              child: resultados.isEmpty
+                  ? const Center(child: Text('Nenhum produto encontrado'))
+                  : ListView.builder(
+                      itemCount: resultados.length,
+                      itemBuilder: (context, index) {
+                        final produto = resultados[index];
+                        return ListTile(
+                          leading: const Icon(Icons.inventory_2_outlined),
+                          title: Text(produto.nome),
+                          subtitle: Text('Código: ${produto.codigo}'),
+                          onTap: () {
+                            widget.onSelect(produto.codigo);
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      },
+                    ),
             ),
           ],
         ),

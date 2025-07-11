@@ -148,32 +148,25 @@ class InOutPage extends GetView<MovementController> {
                                 child: TextFormField(
                                   controller: controller.codigoController,
                                   decoration: decorationTheme(
-                                    'Código do Produto',
-                                    '',
-                                    null,
-                                  ),
+                                      'Código do Produto', '', null),
                                   keyboardType: TextInputType.number,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Informe o código do produto';
-                                    }
-                                    return null;
-                                  },
+                                  validator: (v) => v == null || v.isEmpty
+                                      ? 'Informe o código'
+                                      : null,
+                                  onChanged: (_) =>
+                                      controller.fetchAvailableQuantity(),
                                 ),
                               ),
-                              const SizedBox(width: 8),
                               IconButton(
-                                icon: const Icon(
-                                  Icons.search,
-                                  color: Color(0xFF1C4C9C),
-                                ),
+                                icon: const Icon(Icons.search,
+                                    color: Color(0xFF1C4C9C)),
                                 onPressed: () async {
                                   await showDialog(
                                     context: context,
-                                    builder: (context) => ProductSearchModal(
-                                      onSelect: (codigoSelecionado) {
-                                        controller.codigoController.text =
-                                            codigoSelecionado;
+                                    builder: (_) => ProductSearchModal(
+                                      onSelect: (code) {
+                                        controller.codigoController.text = code;
+                                        controller.fetchAvailableQuantity();
                                       },
                                     ),
                                   );
@@ -189,16 +182,32 @@ class InOutPage extends GetView<MovementController> {
                             controller: controller.quantidadeController,
                             decoration: decorationTheme('Quantidade', '', null),
                             keyboardType: TextInputType.number,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
+                            validator: (v) {
+                              if (v == null || v.isEmpty)
                                 return 'Informe a quantidade';
-                              }
-                              if (int.tryParse(value) == null) {
+                              if (int.tryParse(v) == null)
                                 return 'Quantidade inválida';
-                              }
                               return null;
                             },
                           ),
+
+                          // Aqui mostramos o estoque disponível em tempo real
+                          Obx(() {
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    '  Disponível: ${controller.availableQuantity.value}  unidades',
+                                    style: TextStyle(
+                                        color: Color(0xFF1C4C9C),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
 
                           const SizedBox(height: 16),
 

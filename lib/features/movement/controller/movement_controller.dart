@@ -15,9 +15,20 @@ class MovementController extends GetxController {
   final codigoController = TextEditingController();
   final quantidadeController = TextEditingController();
   final matriculaController = TextEditingController();
+  final ProductController productCtrl = Get.find();
+  final RxInt availableQuantity = 0.obs;
 
   // Reactive variable for movement type ("Entrada" or "Saída")
   final RxString tipoMovimentacao = 'Saída'.obs;
+
+  /// Chama sempre que o código do produto muda
+  void fetchAvailableQuantity() {
+    final code = codigoController.text;
+    final prod = productCtrl.products.firstWhereOrNull(
+      (p) => p.codigo == code,
+    );
+    availableQuantity.value = prod?.quantidade ?? 0;
+  }
 
   @override
   void onReady() async {
@@ -146,5 +157,6 @@ class MovementController extends GetxController {
     codigoController.clear();
     quantidadeController.clear();
     tipoMovimentacao.value = 'Entrada';
+    availableQuantity.value = 0;
   }
 }
