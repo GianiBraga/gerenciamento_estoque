@@ -48,7 +48,7 @@ class InOutPage extends GetView<MovementController> {
                   ),
                   onPressed: () async {
                     await UserSessionUtil.clearSession();
-                    Get.offAllNamed('/login');
+                    Get.offAllNamed('/welcome');
                   },
                 );
               }
@@ -109,7 +109,7 @@ class InOutPage extends GetView<MovementController> {
                                     '',
                                     null,
                                   ),
-                                  keyboardType: TextInputType.text,
+                                  keyboardType: TextInputType.number,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Informe a matrícula do funcionário';
@@ -210,51 +210,57 @@ class InOutPage extends GetView<MovementController> {
                                   ConnectionState.done) {
                                 return const SizedBox.shrink();
                               }
-                              final role = snapshot.data;
-                              if (role == 'user') {
-                                // Força 'Saída' e bloqueia edição
+                              final role = snapshot.data?.trim().toLowerCase();
+
+                              if (role == 'admin') {
+                                // Admin pode escolher Entradas e Saídas
+                                return Obx(() =>
+                                    DropdownButtonFormField<String>(
+                                      value: controller.tipoMovimentacao.value,
+                                      decoration: decorationTheme(
+                                        'Tipo de Movimentação',
+                                        '',
+                                        null,
+                                      ),
+                                      items: ['Entrada', 'Saída']
+                                          .map((tipo) => DropdownMenuItem(
+                                                value: tipo,
+                                                child: Text(
+                                                  tipo,
+                                                  style: const TextStyle(
+                                                      fontSize: 14),
+                                                ),
+                                              ))
+                                          .toList(),
+                                      onChanged: (value) {
+                                        if (value != null) {
+                                          controller.tipoMovimentacao.value =
+                                              value;
+                                        }
+                                      },
+                                      style: const TextStyle(
+                                          fontSize: 16, color: Colors.black),
+                                      dropdownColor: Colors.white,
+                                      isDense: true,
+                                    ));
+                              }
+
+                              // Usuário comum: força 'Saída' e mostra apenas texto
+                              return Obx(() {
+                                // garante valor compatível
                                 controller.tipoMovimentacao.value = 'Saída';
-                                return TextFormField(
-                                  initialValue: 'Saída',
-                                  readOnly: true,
+                                return InputDecorator(
                                   decoration: decorationTheme(
                                     'Tipo de Movimentação',
                                     '',
                                     null,
                                   ),
+                                  child: Text(
+                                    controller.tipoMovimentacao.value,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
                                 );
-                              }
-                              // Admin pode escolher
-                              return Obx(() => DropdownButtonFormField<String>(
-                                    value: controller.tipoMovimentacao.value,
-                                    decoration: decorationTheme(
-                                      'Tipo de Movimentação',
-                                      '',
-                                      null,
-                                    ),
-                                    items: ['Entrada', 'Saída']
-                                        .map((tipo) => DropdownMenuItem(
-                                              value: tipo,
-                                              child: Text(
-                                                tipo,
-                                                style: const TextStyle(
-                                                    fontSize: 14),
-                                              ),
-                                            ))
-                                        .toList(),
-                                    onChanged: (value) {
-                                      if (value != null) {
-                                        controller.tipoMovimentacao.value =
-                                            value;
-                                      }
-                                    },
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                    ),
-                                    dropdownColor: Colors.white,
-                                    isDense: true,
-                                  ));
+                              });
                             },
                           ),
 

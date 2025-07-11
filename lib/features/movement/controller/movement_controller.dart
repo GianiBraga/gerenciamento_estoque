@@ -17,7 +17,24 @@ class MovementController extends GetxController {
   final matriculaController = TextEditingController();
 
   // Reactive variable for movement type ("Entrada" or "Saída")
-  final RxString tipoMovimentacao = 'Entrada'.obs;
+  final RxString tipoMovimentacao = 'Saída'.obs;
+
+  @override
+  void onReady() async {
+    super.onReady();
+    final role = (await UserSessionUtil.getUserRole())?.trim().toLowerCase();
+    if (role != 'admin') {
+      tipoMovimentacao.value = 'Saída';
+    }
+  }
+  // void onInit() async {
+  //   super.onInit();
+  //   final role = (await UserSessionUtil.getUserRole())?.trim().toLowerCase();
+  //   if (role != 'admin') {
+  //     tipoMovimentacao.value = 'Saída';
+  //   }
+  //   tipoMovimentacao.value = 'Saída'; // Garante que sempre começa como 'Saída'
+  // }
 
   // Loading state during save operation
   final RxBool isLoading = false.obs;

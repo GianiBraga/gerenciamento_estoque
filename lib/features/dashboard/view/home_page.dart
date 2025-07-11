@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                   IconButton(
                     onPressed: () async {
                       await UserSessionUtil.clearSession();
-                      Get.offAllNamed('/login'); // Return to login screen
+                      Get.offAllNamed('/welcome'); // Return to login screen
                     },
                     icon: const Icon(
                       Icons.logout_rounded,
