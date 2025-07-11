@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_estoque/core/utils/db_helper.dart';
 import 'package:gerenciamento_estoque/features/auth/controller/login_controller.dart';
 import 'package:gerenciamento_estoque/features/auth/view/login_page.dart';
 import 'package:gerenciamento_estoque/features/employee/controller/employee_controller.dart';
@@ -15,6 +16,8 @@ import 'package:get/get.dart';
 // Fazer teste na edição de produtos.
 // Possiveis nomes: SENAI Controla+; SENAI SmartStock;
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DBHelper.initDB();
   // Initialize Supabase with project URL and anon key
   await Supabase.initialize(
     url: 'https://wivxkjaospkprnbswoob.supabase.co',

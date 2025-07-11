@@ -24,23 +24,42 @@ class _ProductSearchModalState extends State<ProductSearchModal> {
   @override
   void initState() {
     super.initState();
-    resultados = controller.products;
+    resultados = List<ProductModel>.from(controller.products);
+    _sortResults();
+
+    ever<List<ProductModel>>(controller.products, (newList) {
+      if (!mounted) return;
+      setState(() {
+        resultados = List<ProductModel>.from(newList);
+        _sortResults();
+      });
+    });
+
     searchController.addListener(_filterList);
   }
 
   void _filterList() {
+    if (!mounted) return;
     final query = searchController.text.toLowerCase();
     setState(() {
       resultados = controller.products.where((p) {
-        return p.nome.toLowerCase().contains(query) ||
-            p.codigo.toLowerCase().contains(query) ||
-            p.descricao.toLowerCase().contains(query);
+        final nomeMatch = p.nome.toLowerCase().contains(query);
+        final codigoMatch = (p.codigo?.toLowerCase() ?? '').contains(query);
+        final descMatch = (p.descricao?.toLowerCase() ?? '').contains(query);
+        return nomeMatch || codigoMatch || descMatch;
       }).toList();
+      _sortResults();
     });
+  }
+
+  void _sortResults() {
+    resultados
+        .sort((a, b) => a.nome.toLowerCase().compareTo(b.nome.toLowerCase()));
   }
 
   @override
   void dispose() {
+    searchController.removeListener(_filterList);
     searchController.dispose();
     super.dispose();
   }
@@ -53,6 +72,7 @@ class _ProductSearchModalState extends State<ProductSearchModal> {
         height: MediaQuery.of(context).size.height * 0.75,
         child: Column(
           children: [
+            // Cabeçalho
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               width: double.infinity,
@@ -79,6 +99,7 @@ class _ProductSearchModalState extends State<ProductSearchModal> {
                 ],
               ),
             ),
+            // Campo de busca
             Padding(
               padding: const EdgeInsets.all(16),
               child: TextField(
@@ -92,22 +113,25 @@ class _ProductSearchModalState extends State<ProductSearchModal> {
                 ),
               ),
             ),
+            // Lista de resultados
             Expanded(
-              child: ListView.builder(
-                itemCount: resultados.length,
-                itemBuilder: (context, index) {
-                  final produto = resultados[index];
-                  return ListTile(
-                    leading: const Icon(Icons.inventory_2_outlined),
-                    title: Text(produto.nome),
-                    subtitle: Text('Código: ${produto.codigo}'),
-                    onTap: () {
-                      widget.onSelect(produto.codigo);
-                      Navigator.of(context).pop();
-                    },
-                  );
-                },
-              ),
+              child: resultados.isEmpty
+                  ? const Center(child: Text('Nenhum produto encontrado'))
+                  : ListView.builder(
+                      itemCount: resultados.length,
+                      itemBuilder: (context, index) {
+                        final produto = resultados[index];
+                        return ListTile(
+                          leading: const Icon(Icons.inventory_2_outlined),
+                          title: Text(produto.nome),
+                          subtitle: Text('Código: ${produto.codigo ?? ''}'),
+                          onTap: () {
+                            widget.onSelect(produto.codigo ?? '');
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      },
+                    ),
             ),
           ],
         ),

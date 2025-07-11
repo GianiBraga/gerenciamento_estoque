@@ -157,7 +157,7 @@ class _ProductListPageState extends State<ProductListPage> {
                                   fontSize: 15, fontWeight: FontWeight.w500)),
                           const SizedBox(height: 4),
                           Text(
-                            'Estoque: ${produto.quantidade} ${_formatarUnidade(produto.unidade)} | Código: ${produto.codigo}',
+                            'Estoque: ${produto.quantidade} ${_formatarUnidade(produto.unidade ?? '')} | Código: ${produto.codigo}',
                             style: TextStyle(
                                 fontSize: 13, color: Colors.grey[600]),
                           ),

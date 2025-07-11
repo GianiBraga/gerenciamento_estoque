@@ -1,22 +1,19 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_estoque/core/utils/db_helper.dart';
 import 'package:get/get.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../data/local_product_service.dart';
 import '../data/product_service.dart';
 import '../../product/model/product_model.dart';
 
-/// Controller responsible for managing product data and operations using GetX.
-/// Handles form input, state management, and Supabase integration.
+/// Controller responsável por gerenciar produtos, com persistência local
+/// (SQLite) e sincronização com Supabase quando online.
 class ProductController extends GetxController {
-  /// Reactive list of all products for listing and search
   final RxList<ProductModel> products = <ProductModel>[].obs;
-
-  /// Search filter text used for filtering product list
   final RxString filtro = ''.obs;
 
-  // Text field controllers for the product form
   final codigoController = TextEditingController();
   final nomeController = TextEditingController();
   final valorController = TextEditingController();
@@ -27,155 +24,16 @@ class ProductController extends GetxController {
   final unidadeController = TextEditingController();
   final estoqueMinimoController = TextEditingController();
 
-  /// Service layer to perform CRUD operations with Supabase
-  final ProductService _productService = ProductService();
-
-  /// Loads all products from Supabase and updates the observable list
-  Future<void> loadProducts() async {
-    final data = await _productService.getAllProducts();
-    products.assignAll(data);
-  }
-
-  /// Saves a new product to Supabase, including optional image upload
-  Future<void> saveProduct(
-      {File? imageFile, String unidade = 'unidade'}) async {
-    try {
-      String? imageUrl;
-
-      // Upload image if provided
-      if (imageFile != null) {
-        final fileName = 'produto_${DateTime.now().millisecondsSinceEpoch}.jpg';
-        await Supabase.instance.client.storage
-            .from('produtosimagens')
-            .upload(fileName, imageFile);
-        imageUrl = Supabase.instance.client.storage
-            .from('produtosimagens')
-            .getPublicUrl(fileName);
-      }
-
-      // Create product model from form input
-      final product = ProductModel(
-        codigo: codigoController.text,
-        nome: nomeController.text,
-        valor:
-            double.tryParse(valorController.text.replaceAll(',', '.')) ?? 0.0,
-        segmento: segmentoController.text,
-        validade: _formatarDataParaSQL(validadeController.text),
-        unidade: unidade,
-        quantidade: int.tryParse(quantidadeController.text) ?? 0,
-        descricao: descricaoController.text,
-        imagemUrl: imageUrl,
-        estoqueMinimo: int.tryParse(estoqueMinimoController.text) ?? 0,
-      );
-
-      await _productService.insertProduct(product);
-      await loadProducts();
-
-      clearForm();
-      Get.back();
-
-      Get.snackbar('Sucesso', 'Produto salvo com sucesso.',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green.withOpacity(0.40));
-    } catch (e) {
-      Get.snackbar('Erro', 'Erro ao salvar produto: $e',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.40));
-    }
-  }
-
-  /// Updates an existing product on Supabase and refreshes the local list
-  Future<void> updateProduct(ProductModel original,
-      {File? imageFile, required String unidade}) async {
-    try {
-      String? imageUrl = original.imagemUrl;
-
-      // Upload new image if provided
-      if (imageFile != null) {
-        final fileName = 'produto_${DateTime.now().millisecondsSinceEpoch}.jpg';
-        await Supabase.instance.client.storage
-            .from('produtosimagens')
-            .upload(fileName, imageFile);
-        imageUrl = Supabase.instance.client.storage
-            .from('produtosimagens')
-            .getPublicUrl(fileName);
-      }
-
-      // Build updated product object
-      final updated = ProductModel(
-        id: original.id,
-        codigo: codigoController.text,
-        nome: nomeController.text,
-        valor:
-            double.tryParse(valorController.text.replaceAll(',', '.')) ?? 0.0,
-        segmento: segmentoController.text,
-        validade: _formatarDataParaSQL(validadeController.text),
-        unidade: unidade,
-        quantidade: int.tryParse(quantidadeController.text) ?? 0,
-        estoqueMinimo: int.tryParse(estoqueMinimoController.text) ?? 0,
-        descricao: descricaoController.text,
-        imagemUrl: imageUrl,
-      );
-
-      await _productService.updateProduct(updated);
-
-      final index = products.indexWhere((p) => p.id == updated.id);
-      if (index != -1) {
-        products[index] = updated;
-        products.refresh();
-      }
-
-      clearForm();
-      Get.back();
-      Get.snackbar('Sucesso', 'Produto atualizado com sucesso.',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green.withOpacity(0.40));
-    } catch (e) {
-      Get.snackbar('Erro', 'Erro ao atualizar produto: $e',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.red.withOpacity(0.40));
-    }
-  }
-
-  /// Deletes a product from Supabase and removes it from the local list
-  Future<void> deleteProduct(String id) async {
-    try {
-      await _productService.deleteProduct(id);
-
-      products.removeWhere((p) => p.id == id);
-      products.refresh();
-
-      if (Get.key.currentState?.canPop() == true) {
-        Get.back();
-      }
-
-      Get.snackbar('Sucesso', 'Produto excluído com sucesso.',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green.withOpacity(0.40));
-    } catch (e) {
-      Get.snackbar('Erro', 'Erro ao excluir produto: $e',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.red.withOpacity(0.40));
-    }
-  }
-
-  /// Clears all text fields in the product form
-  void clearForm() {
-    codigoController.clear();
-    nomeController.clear();
-    valorController.clear();
-    segmentoController.clear();
-    validadeController.clear();
-    quantidadeController.clear();
-    descricaoController.clear();
-    unidadeController.clear();
-    estoqueMinimoController.clear();
-  }
+  final LocalProductService _localService = LocalProductService();
+  final ProductService _remoteService = ProductService();
+  final supabase = Supabase.instance.client;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
-    loadProducts();
+    await DBHelper.initDB();
+    await loadProducts();
+    _listenConnectivity();
   }
 
   @override
@@ -192,17 +50,207 @@ class ProductController extends GetxController {
     super.onClose();
   }
 
-  /// Converts date string from dd/MM/yyyy to yyyy-MM-dd (used in Supabase)
-  String _formatarDataParaSQL(String dataInput) {
-    if (dataInput.isEmpty) return '';
+  Future<void> loadProducts() async {
+    await syncPending();
+    final data = await _remoteService.getAllProducts();
+    products.assignAll(data);
+  }
+
+  /// Salva produto localmente e tenta sincronização remota
+  Future<void> saveProduct() async {
     try {
-      final partes = dataInput.split('/');
-      if (partes.length == 3) {
-        return '${partes[2]}-${partes[1]}-${partes[0]}';
+      final product = ProductModel(
+        id: null,
+        nome: nomeController.text,
+        descricao: descricaoController.text,
+        codigo: codigoController.text,
+        quantidade: int.tryParse(quantidadeController.text) ?? 0,
+        imagemUrl: null,
+        usuarioId: supabase.auth.currentUser?.id,
+        createdAt: DateTime.now(),
+        valor:
+            double.tryParse(valorController.text.replaceAll(',', '.')) ?? 0.0,
+        segmento: segmentoController.text,
+        validade: _parseDate(validadeController.text),
+        unidade: unidadeController.text,
+        estoqueMinimo: int.tryParse(estoqueMinimoController.text) ?? 0,
+      );
+
+      // Persistência local
+      await _localService.insert(product);
+
+      // Tenta sincronizar se online
+      final conn = await Connectivity().checkConnectivity();
+      if (conn != ConnectivityResult.none) {
+        final res = await supabase
+            .from('produtos')
+            .upsert(product.toMap())
+            .eq('id', product.id ?? '');
+        if (res.error == null) {
+          await _localService.markSynced(product.id!);
+          Get.snackbar(
+            'Sucesso',
+            'Produto sincronizado com sucesso.',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.green.withOpacity(0.4),
+          );
+        }
+      } else {
+        Get.snackbar(
+          'Offline',
+          'Sem conexão: produto salvo localmente e será sincronizado depois.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.orange.withOpacity(0.4),
+        );
       }
-      return dataInput;
+
+      await loadProducts();
+      clearForm();
+      Get.back();
     } catch (e) {
-      return dataInput;
+      Get.snackbar(
+        'Erro',
+        'Erro ao salvar produto: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.4),
+      );
+    }
+  }
+
+  /// Atualiza produto localmente e tenta sincronização remota
+  Future<void> updateProduct(ProductModel original) async {
+    try {
+      final updated = ProductModel(
+        id: original.id,
+        nome: nomeController.text,
+        descricao: descricaoController.text,
+        codigo: codigoController.text,
+        quantidade: int.tryParse(quantidadeController.text) ?? 0,
+        imagemUrl: original.imagemUrl,
+        usuarioId: original.usuarioId,
+        createdAt: original.createdAt,
+        valor:
+            double.tryParse(valorController.text.replaceAll(',', '.')) ?? 0.0,
+        segmento: segmentoController.text,
+        validade: _parseDate(validadeController.text),
+        unidade: unidadeController.text,
+        estoqueMinimo: int.tryParse(estoqueMinimoController.text) ?? 0,
+      );
+
+      await _localService.insert(updated);
+
+      final conn = await Connectivity().checkConnectivity();
+      if (conn != ConnectivityResult.none) {
+        final res = await supabase
+            .from('produtos')
+            .upsert(updated.toMap())
+            .eq('id', updated.id ?? '');
+        if (res.error == null) {
+          await _localService.markSynced(updated.id!);
+          Get.snackbar(
+            'Sucesso',
+            'Produto sincronizado com sucesso.',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.green.withOpacity(0.4),
+          );
+        }
+      } else {
+        Get.snackbar(
+          'Offline',
+          'Sem conexão: alterações salvas localmente e serão sincronizadas depois.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.orange.withOpacity(0.4),
+        );
+      }
+
+      final idx = products.indexWhere((p) => p.id == updated.id);
+      if (idx != -1) {
+        products[idx] = updated;
+        products.refresh();
+      }
+      clearForm();
+      Get.back();
+    } catch (e) {
+      Get.snackbar(
+        'Erro',
+        'Erro ao atualizar produto: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.4),
+      );
+    }
+  }
+
+  /// Deleta produto remotamente
+  Future<void> deleteProduct(String id) async {
+    try {
+      await _remoteService.deleteProduct(id);
+      products.removeWhere((p) => p.id == id);
+      products.refresh();
+      if (Get.key.currentState?.canPop() == true) Get.back();
+      Get.snackbar(
+        'Sucesso',
+        'Produto excluído com sucesso.',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green.withOpacity(0.4),
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Erro',
+        'Erro ao excluir produto: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.4),
+      );
+    }
+  }
+
+  /// Sincroniza pendentes no SQLite com Supabase
+  Future<void> syncPending() async {
+    final pendentes = await _localService.getPending();
+    for (final p in pendentes) {
+      final res = await supabase
+          .from('produtos')
+          .upsert(p.toMap())
+          .eq('id', p.id ?? '');
+      if (res.error == null) {
+        await _localService.markSynced(p.id!);
+      }
+    }
+  }
+
+  void _listenConnectivity() {
+    Connectivity().onConnectivityChanged.listen((status) {
+      if (status != ConnectivityResult.none) syncPending();
+    });
+  }
+
+  /// Limpa os campos do formulário
+  void clearForm() {
+    codigoController.clear();
+    nomeController.clear();
+    valorController.clear();
+    segmentoController.clear();
+    validadeController.clear();
+    quantidadeController.clear();
+    descricaoController.clear();
+    unidadeController.clear();
+    estoqueMinimoController.clear();
+  }
+
+  /// Converte dd/MM/yyyy para DateTime?
+  DateTime? _parseDate(String input) {
+    if (input.isEmpty) return null;
+    try {
+      final parts = input.split('/');
+      if (parts.length == 3) {
+        return DateTime(
+          int.parse(parts[2]),
+          int.parse(parts[1]),
+          int.parse(parts[0]),
+        );
+      }
+      return DateTime.tryParse(input);
+    } catch (_) {
+      return null;
     }
   }
 }

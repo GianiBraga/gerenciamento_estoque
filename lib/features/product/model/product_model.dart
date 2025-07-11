@@ -1,71 +1,96 @@
 import 'dart:convert';
 
-/// Data model representing a product in the inventory.
-/// Used for communication between the application and Supabase.
+/// Data model representing um produto, compatível com Supabase e SQLite.
+/// - Campos nulos no PostgreSQL viram String?, DateTime? ou double? em Dart.
+/// - Datas são serializadas/deserializadas em ISO 8601.
 class ProductModel {
-  final String? id; // Unique identifier (UUID) from Supabase
-  final String codigo; // Internal product code (e.g., SKU)
-  final String nome; // Product name
-  final double valor; // Product price
-  final String segmento; // Product category
-  final String? validade; // Expiration date (format: yyyy-MM-dd)
-  final String unidade; // Unit of measure
-  final int quantidade; // Current stock quantity
-  final int estoqueMinimo; // Minimum stock threshold
-  final String descricao; // Description or details
-  final String? imagemUrl; // URL of the product image (optional)
+  final String? id; // UUID gerado pelo Supabase
+  final String nome; // NOT NULL
+  final String? descricao; // NULLABLE
+  final String? codigo; // NULLABLE, UNIQUE
+  final int quantidade; // DEFAULT 0
+  final String? imagemUrl; // NULLABLE
+  final String? usuarioId; // UUID do usuário (nullable FK)
+  final DateTime? createdAt; // timestamp with time zone, default now()
+  final double? valor; // numeric(10,2)
+  final String? segmento; // text nullable
+  final DateTime? validade; // date nullable
+  final String? unidade; // text nullable
+  final int estoqueMinimo; // DEFAULT 0
 
   ProductModel({
     this.id,
-    required this.codigo,
     required this.nome,
-    required this.valor,
-    required this.segmento,
-    required this.validade,
-    required this.unidade,
-    required this.quantidade,
-    required this.estoqueMinimo,
-    required this.descricao,
+    this.descricao,
+    this.codigo,
+    this.quantidade = 0,
     this.imagemUrl,
+    this.usuarioId,
+    this.createdAt,
+    this.valor,
+    this.segmento,
+    this.validade,
+    this.unidade,
+    this.estoqueMinimo = 0,
   });
 
-  /// Creates a [ProductModel] instance from a Supabase response map.
-  factory ProductModel.fromMap(Map<String, dynamic> map) {
-    // Decode 'nome' handling UTF-8 bytes or String
-    final rawNome = map['nome'];
+  /// Constrói a partir de um Map (Supabase ou SQLite), decodificando datas.
+  factory ProductModel.fromMap(Map<String, dynamic> m) {
+    // trata possíveis bytes UTF-8 em 'nome'
+    final rawNome = m['nome'];
     final nome = rawNome is List<int>
         ? utf8.decode(rawNome)
         : (rawNome as String? ?? '');
 
     return ProductModel(
-      id: map['id']?.toString(),
-      codigo: map['codigo'] as String? ?? '',
+      id: m['id']?.toString(),
       nome: nome,
-      valor: double.tryParse(map['valor'].toString()) ?? 0.0,
-      segmento: map['segmento'] as String? ?? '',
-      validade: map['validade']?.toString(),
-      unidade: map['unidade'] as String? ?? '',
-      quantidade: int.tryParse(map['quantidade'].toString()) ?? 0,
-      estoqueMinimo: int.tryParse(map['estoque_minimo'].toString()) ?? 0,
-      descricao: map['descricao'] as String? ?? '',
-      imagemUrl: map['imagem_url'] as String?,
+      descricao: m['descricao'] as String?,
+      codigo: m['codigo'] as String?,
+      quantidade: (m['quantidade'] is int)
+          ? m['quantidade'] as int
+          : int.tryParse(m['quantidade']?.toString() ?? '') ?? 0,
+      imagemUrl: m['imagem_url'] as String?,
+      usuarioId: m['usuario_id']?.toString(),
+      createdAt: m['created_at'] != null
+          ? DateTime.parse(m['created_at'] as String)
+          : null,
+      valor: m['valor'] != null ? double.tryParse(m['valor'].toString()) : null,
+      segmento: m['segmento'] as String?,
+      validade: m['validade'] != null
+          ? DateTime.parse(m['validade'] as String)
+          : null,
+      unidade: m['unidade'] as String?,
+      estoqueMinimo: (m['estoque_minimo'] is int)
+          ? m['estoque_minimo'] as int
+          : int.tryParse(m['estoque_minimo']?.toString() ?? '') ?? 0,
     );
   }
 
-  /// Converts the [ProductModel] instance into a map for insertion or update in Supabase.
+  /// Gera o Map para upsert no Supabase.
   Map<String, dynamic> toMap() {
     return {
       if (id != null) 'id': id,
-      'codigo': codigo,
       'nome': nome,
+      'descricao': descricao,
+      'codigo': codigo,
+      'quantidade': quantidade,
+      'imagem_url': imagemUrl,
+      'usuario_id': usuarioId,
+      'created_at': createdAt?.toIso8601String(),
       'valor': valor,
       'segmento': segmento,
-      'validade': validade,
+      'validade': validade?.toIso8601String(),
       'unidade': unidade,
-      'quantidade': quantidade,
       'estoque_minimo': estoqueMinimo,
-      'descricao': descricao,
-      'imagem_url': imagemUrl,
     };
+  }
+
+  /// (Opcional) Se for usar localmente com sqflite, adicione isSynced:
+  Map<String, dynamic> toLocalMap({bool isSynced = false}) {
+    final m = toMap();
+    // SQLite não aceita null em campos não criados; converte double? para REAL, DateTime? para TEXT
+    m['isSynced'] = isSynced ? 1 : 0;
+    return m;
   }
 }

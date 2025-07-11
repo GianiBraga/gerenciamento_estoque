@@ -30,30 +30,27 @@ class _ProductFormState extends State<ProductForm> {
   File? _imagemSelecionada;
   bool _isLoading = false;
 
-  String? unidadeSelecionada;
-
   final List<String> unidades = ['unidade', 'caixa'];
 
   @override
   void initState() {
     super.initState();
-
-    // If editing an existing product, populate form fields
     if (widget.produto != null) {
       final p = widget.produto!;
-      controller.codigoController.text = p.codigo;
+      controller.codigoController.text = p.codigo ?? '';
       controller.nomeController.text = p.nome;
       controller.valorController.text = p.valor.toString();
-      controller.segmentoController.text = p.segmento;
-      controller.validadeController.text = p.validade.toString();
+      controller.segmentoController.text = p.segmento ?? '';
+      controller.validadeController.text = p.validade != null
+          ? DateFormat('dd/MM/yyyy').format(p.validade!)
+          : '';
+      controller.unidadeController.text = p.unidade ?? '';
       controller.quantidadeController.text = p.quantidade.toString();
-      controller.descricaoController.text = p.descricao;
       controller.estoqueMinimoController.text = p.estoqueMinimo.toString();
-      unidadeSelecionada = p.unidade;
+      controller.descricaoController.text = p.descricao ?? '';
     }
   }
 
-  /// Opens a calendar picker and fills the expiration date field.
   Future<void> _selecionarData() async {
     final pickedDate = await showDatePicker(
       context: context,
@@ -65,16 +62,12 @@ class _ProductFormState extends State<ProductForm> {
     if (pickedDate != null) {
       controller.validadeController.text =
           DateFormat('dd/MM/yyyy').format(pickedDate);
-    } else {
-      controller.validadeController.text = '';
     }
   }
 
-  /// Opens the device gallery to select an image for the product.
   Future<void> _selecionarImagem() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
     if (pickedFile != null) {
       setState(() {
         _imagemSelecionada = File(pickedFile.path);
@@ -85,7 +78,6 @@ class _ProductFormState extends State<ProductForm> {
   @override
   Widget build(BuildContext context) {
     final maxHeight = MediaQuery.of(context).size.height * 0.8;
-
     return SizedBox(
       height: maxHeight,
       child: SingleChildScrollView(
@@ -95,7 +87,6 @@ class _ProductFormState extends State<ProductForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Image selection area
               Center(
                 child: GestureDetector(
                   onTap: _selecionarImagem,
@@ -122,104 +113,63 @@ class _ProductFormState extends State<ProductForm> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
               _buildLabel('Código:'),
               _buildField(controller.codigoController, 'Ex.: 12345...', true),
-
               _buildLabel('Nome:'),
               _buildField(controller.nomeController, 'Ex.: Caneta...', true),
-
               _buildLabel('Valor R\$:'),
-              _buildField(controller.valorController, 'R\$ 00.00', false,
-                  keyboardType: TextInputType.number),
-
-              _buildLabel('Segmento:'),
-              DropdownButtonFormField<String>(
-                value: controller.segmentoController.text.isNotEmpty
-                    ? controller.segmentoController.text
-                    : null,
-                items: ['Limpeza', 'Expediente', 'Uniforme', 'EPI']
-                    .map((segmento) => DropdownMenuItem(
-                          value: segmento,
-                          child: Text(segmento),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      controller.segmentoController.text = value;
-                    });
-                  }
-                },
-                decoration: decorationTheme('', 'Selecione o segmento', null),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Selecione um segmento'
-                    : null,
+              _buildField(
+                controller.valorController,
+                'R\$ 00.00',
+                false,
+                keyboardType: TextInputType.number,
               ),
-
+              _buildLabel('Segmento:'),
+              _buildField(
+                controller.segmentoController,
+                'Ex.: Escritório',
+                true,
+              ),
               _buildLabel('Data de validade:'),
               TextFormField(
                 controller: controller.validadeController,
                 readOnly: true,
                 onTap: _selecionarData,
                 decoration: decorationTheme(
-                  ' ',
-                  '20/05/2025',
+                  '',
+                  'dd/MM/yyyy',
                   IconButton(
                     icon: const Icon(Icons.calendar_today),
                     onPressed: _selecionarData,
                   ),
                 ),
               ),
-
               const SizedBox(height: 12),
-
-              _buildLabel('Unidade de Medida:'),
+              _buildLabel('Unidade:'),
               DropdownButtonFormField<String>(
-                value: unidadeSelecionada,
-                decoration: decorationTheme('', 'Selecione a unidade', null),
+                value: controller.unidadeController.text.isNotEmpty
+                    ? controller.unidadeController.text
+                    : null,
+                decoration: decorationTheme('', 'Selecione unidade', null),
                 items: unidades
                     .map((u) => DropdownMenuItem(value: u, child: Text(u)))
                     .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    unidadeSelecionada = value;
-                  });
+                onChanged: (v) {
+                  if (v != null) controller.unidadeController.text = v;
                 },
-                validator: (v) => v == null ? 'Selecione uma unidade' : null,
+                validator: (v) =>
+                    v == null || v.isEmpty ? 'Selecione uma unidade' : null,
               ),
-
               const SizedBox(height: 12),
-
               _buildLabel('Quantidade:'),
-              TextFormField(
-                controller: controller.quantidadeController,
-                decoration: decorationTheme('', 'Ex.: 10', null),
-                keyboardType: TextInputType.number,
-                validator: (v) {
-                  if (v == null || v.isEmpty) return 'Informe a quantidade';
-                  if (int.tryParse(v) == null) return 'Número inválido';
-                  return null;
-                },
-              ),
-
+              _buildField(controller.quantidadeController, 'Ex.: 10', true,
+                  keyboardType: TextInputType.number),
               const SizedBox(height: 12),
-
               _buildLabel('Estoque mínimo:'),
-              TextFormField(
-                controller: controller.estoqueMinimoController,
-                decoration: decorationTheme('', 'Ex.: 5', null),
-                keyboardType: TextInputType.number,
-                validator: (v) {
-                  if (v == null || v.isEmpty) return 'Informe o estoque mínimo';
-                  if (int.tryParse(v) == null) return 'Número inválido';
-                  return null;
-                },
-              ),
+              _buildField(controller.estoqueMinimoController, 'Ex.: 5', true,
+                  keyboardType: TextInputType.number),
               const SizedBox(height: 12),
-
               _buildLabel('Descrição:'),
               TextFormField(
                 controller: controller.descricaoController,
@@ -227,62 +177,49 @@ class _ProductFormState extends State<ProductForm> {
                     decorationTheme('', 'Descrição do produto...', null),
                 maxLines: 3,
               ),
-
               const SizedBox(height: 24),
-
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () =>
-                          {controller.clearForm(), Navigator.of(context).pop()},
-                      child: const Text(
-                        'Cancelar',
-                        style: TextStyle(color: Color(0xFF1C4C9C)),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          setState(() => _isLoading = true);
-                          if (widget.produto == null) {
-                            await controller.saveProduct(
-                              imageFile: _imagemSelecionada,
-                              unidade: unidadeSelecionada!,
-                            );
-                          } else {
-                            await controller.updateProduct(
-                              widget.produto!,
-                              imageFile: _imagemSelecionada,
-                              unidade: unidadeSelecionada!,
-                            );
-                          }
-                          setState(() => _isLoading = false);
-                          widget.onSaved();
-                          Get.back();
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      controller.clearForm();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancelar',
+                        style: TextStyle(color: Color(0xFF1C4C9C))),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        setState(() => _isLoading = true);
+                        if (widget.produto == null) {
+                          await controller.saveProduct();
+                        } else {
+                          await controller.updateProduct(widget.produto!);
                         }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1C4C9C),
-                      ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 18,
-                              width: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Text('Salvar',
-                              style: TextStyle(color: Colors.white)),
+                        setState(() => _isLoading = false);
+                        widget.onSaved();
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1C4C9C),
                     ),
-                  ],
-                ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text('Salvar',
+                            style: TextStyle(color: Colors.white)),
+                  ),
+                ],
               ),
             ],
           ),
@@ -298,15 +235,14 @@ class _ProductFormState extends State<ProductForm> {
     );
   }
 
-  Widget _buildField(
-      TextEditingController controller, String hint, bool required,
+  Widget _buildField(TextEditingController ctl, String hint, bool required,
       {TextInputType keyboardType = TextInputType.text}) {
     return TextFormField(
-      controller: controller,
-      decoration: decorationTheme('', hint, null),
+      controller: ctl,
       keyboardType: keyboardType,
+      decoration: decorationTheme('', hint, null),
       validator: required
-          ? (v) => (v == null || v.isEmpty) ? 'Campo obrigatório' : null
+          ? (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null
           : null,
     );
   }
